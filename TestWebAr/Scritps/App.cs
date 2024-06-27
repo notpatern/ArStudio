@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CefSharp;
 using CefSharp.OffScreen;
 using StereoKit;
@@ -9,6 +10,8 @@ public class App
     Browser browserInstance;
     ChromiumWebBrowser browser;
     Pose windowPose;
+
+    List<Browser> browserList = new List<Browser>();
 
     Material floorMaterial;
     string userUrl;
@@ -25,14 +28,47 @@ public class App
         if (!SK.Initialize(settings))
             Environment.Exit(1);
 
-        browserInstance = new Browser("https://skylog-m6.broadteam.eu/login");
-        windowPose = new Pose(0, 0, -0.5f, Quat.LookDir(0, 0, 1));
+        for (int i = 0; i < 5; i++)
+        {
+            browserList.Add(
+                new Browser(
+                    "https://skylog-m6.broadteam.eu/login",
+                    new Pose(0 + i, 0, -0.5f, Quat.LookDir(0, 0, 1)),
+                    i.ToString()
+                )
+            );
+        }
 
         floorMaterial = new Material("floor.hlsl");
         floorMaterial.Transparency = Transparency.Blend;
 
         userUrl = "https://skylog-m6.broadteam.eu/login";
     }
+
+    private void UpdateBrowsers()
+    {
+        foreach (Browser browser in browserList)
+        {
+            browser.UpdateBrowser();
+        }
+    }
+
+    public void Update()
+    {
+        if (SK.System.displayType == Display.Opaque)
+            Default.MeshCube.Draw(
+                floorMaterial,
+                World.HasBounds
+                    ? World.BoundsPose.ToMatrix(new Vec3(30, 0.1f, 30))
+                    : Matrix.TS(0, -1.5f, 0, new Vec3(30, 0.1f, 30))
+            );
+
+        CaptureKeyboardInput();
+
+        UpdateBrowsers();
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
 
     private void CaptureKeyboardInput()
     {
@@ -64,16 +100,16 @@ public class App
         CheckAndForwardKey(Key.Y, VirtualKeyCode.VK_Y);
         CheckAndForwardKey(Key.Z, VirtualKeyCode.VK_Z);
 
-        CheckAndForwardKey(Key.Num0, VirtualKeyCode.VK_0);
-        CheckAndForwardKey(Key.Num1, VirtualKeyCode.VK_1);
-        CheckAndForwardKey(Key.Num2, VirtualKeyCode.VK_2);
-        CheckAndForwardKey(Key.Num3, VirtualKeyCode.VK_3);
-        CheckAndForwardKey(Key.Num4, VirtualKeyCode.VK_4);
-        CheckAndForwardKey(Key.Num5, VirtualKeyCode.VK_5);
-        CheckAndForwardKey(Key.Num6, VirtualKeyCode.VK_6);
-        CheckAndForwardKey(Key.Num7, VirtualKeyCode.VK_7);
-        CheckAndForwardKey(Key.Num8, VirtualKeyCode.VK_8);
-        CheckAndForwardKey(Key.Num9, VirtualKeyCode.VK_9);
+        CheckAndForwardKey(Key.N0, VirtualKeyCode.VK_0);
+        CheckAndForwardKey(Key.N1, VirtualKeyCode.VK_1);
+        CheckAndForwardKey(Key.N2, VirtualKeyCode.VK_2);
+        CheckAndForwardKey(Key.N3, VirtualKeyCode.VK_3);
+        CheckAndForwardKey(Key.N4, VirtualKeyCode.VK_4);
+        CheckAndForwardKey(Key.N5, VirtualKeyCode.VK_5);
+        CheckAndForwardKey(Key.N6, VirtualKeyCode.VK_6);
+        CheckAndForwardKey(Key.N7, VirtualKeyCode.VK_7);
+        CheckAndForwardKey(Key.N8, VirtualKeyCode.VK_8);
+        CheckAndForwardKey(Key.N9, VirtualKeyCode.VK_9);
 
         CheckAndForwardKey(Key.Space, VirtualKeyCode.SPACE);
         CheckAndForwardKey(Key.Return, VirtualKeyCode.RETURN);
@@ -110,7 +146,7 @@ public class App
 
     private void ForwardKeyToCef(VirtualKeyCode key)
     {
-        browser = browserInstance.browser;
+        var selectedBrowser = browserList[0].browser;
         if (browser != null)
         {
             browserInstance.SendKey(
@@ -135,52 +171,6 @@ public class App
                 0
             );
         }
-    }
-
-    private void UpdateBrowser()
-    {
-        UI.WindowBegin("Browser", ref windowPose, V.XY(0.6f, 0), UIWin.Body, UIMove.FaceUser);
-
-        UI.PushEnabled(browserInstance.HasBack);
-        if (UI.Button("Back"))
-            browserInstance.Back();
-        UI.PopEnabled();
-
-        UI.SameLine();
-        UI.PushEnabled(browserInstance.HasForward);
-        if (UI.Button("Forward"))
-            browserInstance.Forward();
-        UI.PopEnabled();
-
-        UI.SameLine();
-        UI.PanelBegin();
-        if (
-            UI.Input("url", ref userUrl, V.XY(UI.LayoutRemaining.x, 0))
-            && Input.Key(Key.Return).IsActive()
-            && userUrl != ""
-        )
-        {
-            browserInstance.Url = userUrl;
-        }
-        UI.Label(browserInstance.Url, V.XY(UI.LayoutRemaining.x, 0));
-        UI.PanelEnd();
-        browserInstance.StepAsUI();
-        UI.WindowEnd();
-    }
-
-    public void Update()
-    {
-        if (SK.System.displayType == Display.Opaque)
-            Default.MeshCube.Draw(
-                floorMaterial,
-                World.HasBounds
-                    ? World.BoundsPose.ToMatrix(new Vec3(30, 0.1f, 30))
-                    : Matrix.TS(0, -1.5f, 0, new Vec3(30, 0.1f, 30))
-            );
-
-        CaptureKeyboardInput();
-
-        UpdateBrowser();
     }
 }
 

@@ -33,7 +33,7 @@ public class Browser
         )
         {
             browser.MainFrame.LoadUrl(targetUrl);
-            newBrowser = null;
+            newBrowser = new ChromiumWebBrowser();
             return true;
         }
     }
@@ -58,9 +58,15 @@ public class Browser
     float browserAspect = 9.0f / 16.0f;
     Material material;
 
-    public Browser(string url)
+    Pose windowPosition;
+    string userUrl;
+    string name;
+
+    public Browser(string url, Pose windowPosition, string name)
     {
-        this.url = url;
+        this.name = name;
+        this.windowPosition = windowPosition;
+
         Texture = Tex.White;
         Url = url;
         tex = new Tex[]
@@ -159,7 +165,38 @@ public class Browser
     Vec2 startAt;
     Vec2 prevAt;
 
-    public void StepAsUI()
+    public void UpdateBrowser()
+    {
+        UI.WindowBegin(name, ref windowPosition, V.XY(0.6f, 0), UIWin.Body, UIMove.FaceUser);
+
+        UI.PushEnabled(this.HasBack);
+        if (UI.Button("Back"))
+            this.Back();
+        UI.PopEnabled();
+
+        UI.SameLine();
+        UI.PushEnabled(this.HasForward);
+        if (UI.Button("Forward"))
+            this.Forward();
+        UI.PopEnabled();
+
+        UI.SameLine();
+        UI.PanelBegin();
+        if (
+            UI.Input("url", ref userUrl, V.XY(UI.LayoutRemaining.x, 0))
+            && Input.Key(Key.Return).IsActive()
+            && userUrl != ""
+        )
+        {
+            this.Url = userUrl;
+        }
+        UI.Label(this.Url, V.XY(UI.LayoutRemaining.x, 0));
+        UI.PanelEnd();
+        StepAsUI();
+        UI.WindowEnd();
+    }
+
+    private void StepAsUI()
     {
         float width = UI.LayoutRemaining.x;
         Bounds bounds = UI.LayoutReserve(new Vec2(width, browserAspect * width));
