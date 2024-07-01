@@ -11,7 +11,7 @@ public class App
     ChromiumWebBrowser browser;
     Pose windowPose;
 
-    List<Browser> browserList = new List<Browser>();
+    List<Window> browserList = new List<Window>();
 
     Material floorMaterial;
     string userUrl;
@@ -28,12 +28,15 @@ public class App
         if (!SK.Initialize(settings))
             Environment.Exit(1);
 
-        for (int i = 0; i < 5; i++)
+        browserInstance = new Browser("https://skylog-m6.broadteam.eu/login", "Internet");
+
+        for (int i = 0; i < 1; i++)
         {
             browserList.Add(
-                new Browser(
-                    "https://skylog-m6.broadteam.eu/login",
+                new Window(
+                    browserInstance,
                     new Pose(0 + i, 0, -0.5f, Quat.LookDir(0, 0, 1)),
+                    "https://skylog-m6.broadteam.eu/login",
                     i.ToString()
                 )
             );
@@ -47,9 +50,9 @@ public class App
 
     private void UpdateBrowsers()
     {
-        foreach (Browser browser in browserList)
+        foreach (Window browser in browserList)
         {
-            browser.UpdateBrowser();
+            browser.UpdateWindow();
         }
     }
 
@@ -64,7 +67,7 @@ public class App
             );
 
         CaptureKeyboardInput();
-
+        browserInstance.UpdateBrowser();
         UpdateBrowsers();
     }
 

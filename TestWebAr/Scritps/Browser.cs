@@ -33,7 +33,7 @@ public class Browser
         )
         {
             browser.MainFrame.LoadUrl(targetUrl);
-            newBrowser = new ChromiumWebBrowser();
+            newBrowser = null;
             return true;
         }
     }
@@ -55,17 +55,16 @@ public class Browser
     int texCurr = 0;
     string url;
 
-    float browserAspect = 9.0f / 16.0f;
-    Material material;
+    public float browserAspect = 9.0f / 16.0f;
+    public Material material;
 
-    Pose windowPosition;
+//  Pose windowPosition;
     string userUrl;
     string name;
 
-    public Browser(string url, Pose windowPosition, string name)
+    public Browser(string url, string name)
     {
         this.name = name;
-        this.windowPosition = windowPosition;
 
         Texture = Tex.White;
         Url = url;
@@ -138,7 +137,7 @@ public class Browser
         browser.GetHost().SendKeyEvent(keyEvent);
     }
 
-    TouchPoint TouchPoint(Bounds bounds, Handed hand)
+    public TouchPoint TouchPoint(Bounds bounds, Handed hand)
     {
         Hand h = Input.Hand(hand);
         HandJoint j = h[FingerId.Index, JointId.Tip];
@@ -167,33 +166,33 @@ public class Browser
 
     public void UpdateBrowser()
     {
-        UI.WindowBegin(name, ref windowPosition, V.XY(0.6f, 0), UIWin.Body, UIMove.FaceUser);
+       // UI.WindowBegin(name, ref windowPosition, V.XY(0.6f, 0), UIWin.Body, UIMove.FaceUser);
 
-        UI.PushEnabled(this.HasBack);
-        if (UI.Button("Back"))
-            this.Back();
-        UI.PopEnabled();
+       // UI.PushEnabled(this.HasBack);
+       // if (UI.Button("Back"))
+       //     this.Back();
+       // UI.PopEnabled();
 
-        UI.SameLine();
-        UI.PushEnabled(this.HasForward);
-        if (UI.Button("Forward"))
-            this.Forward();
-        UI.PopEnabled();
+       // UI.SameLine();
+       // UI.PushEnabled(this.HasForward);
+       // if (UI.Button("Forward"))
+       //     this.Forward();
+       // UI.PopEnabled();
 
-        UI.SameLine();
-        UI.PanelBegin();
-        if (
-            UI.Input("url", ref userUrl, V.XY(UI.LayoutRemaining.x, 0))
-            && Input.Key(Key.Return).IsActive()
-            && userUrl != ""
-        )
-        {
-            this.Url = userUrl;
-        }
-        UI.Label(this.Url, V.XY(UI.LayoutRemaining.x, 0));
-        UI.PanelEnd();
+       // UI.SameLine();
+       // UI.PanelBegin();
+       // if (
+       //     UI.Input("url", ref userUrl, V.XY(UI.LayoutRemaining.x, 0))
+       //     && Input.Key(Key.Return).IsActive()
+       //     && userUrl != ""
+       // )
+       // {
+       //    this.Url = userUrl;
+       // }
+       // UI.Label(this.Url, V.XY(UI.LayoutRemaining.x, 0));
+       // UI.PanelEnd();
         StepAsUI();
-        UI.WindowEnd();
+       // UI.WindowEnd();
     }
 
     private void StepAsUI()
