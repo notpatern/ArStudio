@@ -1,17 +1,14 @@
 using System;
 using System.Collections.Generic;
 using CefSharp;
-using CefSharp.OffScreen;
 using StereoKit;
 using StereoKit.Framework;
 
 public class App
 {
-    Browser browserInstance;
-    ChromiumWebBrowser browser;
     Pose windowPose;
 
-    List<Window> browserList = new List<Window>();
+    List<Browser> browserList = new List<Browser>();
 
     Material floorMaterial;
     string userUrl;
@@ -28,18 +25,18 @@ public class App
         if (!SK.Initialize(settings))
             Environment.Exit(1);
 
-        browserInstance = new Browser("https://skylog-m6.broadteam.eu/login", "Internet");
-
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 10; i++)
         {
             browserList.Add(
-                new Window(
-                    browserInstance,
+                new Browser(
+                    "https://youtu.be/hCa_X4h5vYQ?si=iaF4NTTOSEKwdhyJ",
+                    i.ToString(),
                     new Pose(0 + i, 0, -0.5f, Quat.LookDir(0, 0, 1)),
-                    "https://skylog-m6.broadteam.eu/login",
-                    i.ToString()
+                    "CefSharp\\Cache" + i
                 )
             );
+            while (browserList[i].browser == null) {}
+            while (!browserList[i].browser.IsBrowserInitialized) {}
         }
 
         floorMaterial = new Material("floor.hlsl");
@@ -50,9 +47,9 @@ public class App
 
     private void UpdateBrowsers()
     {
-        foreach (Window browser in browserList)
+        foreach (Browser browser in browserList)
         {
-            browser.UpdateWindow();
+            browser.UpdateBrowser();
         }
     }
 
@@ -67,7 +64,6 @@ public class App
             );
 
         CaptureKeyboardInput();
-        browserInstance.UpdateBrowser();
         UpdateBrowsers();
     }
 
@@ -149,30 +145,32 @@ public class App
 
     private void ForwardKeyToCef(VirtualKeyCode key)
     {
-        var selectedBrowser = browserList[0].browser;
-        if (browser != null)
-        {
-            browserInstance.SendKey(
-                browser.GetBrowser(),
-                CefEventFlags.None,
-                KeyEventType.RawKeyDown,
-                (int)key,
-                0
-            );
-            browserInstance.SendKey(
-                browser.GetBrowser(),
-                CefEventFlags.None,
-                KeyEventType.Char,
-                (int)key,
-                0
-            );
-            browserInstance.SendKey(
-                browser.GetBrowser(),
-                CefEventFlags.None,
-                KeyEventType.KeyUp,
-                (int)key,
-                0
-            );
+        foreach (Browser browser in browserList) {
+
+            if (browser != null)
+            {
+                 browser.SendKey(
+                        browser.browser.GetBrowser(),
+                        CefEventFlags.None,
+                        KeyEventType.RawKeyDown,
+                        (int)key,
+                        0
+                        );
+                browser.SendKey(
+                        browser.browser.GetBrowser(),
+                        CefEventFlags.None,
+                        KeyEventType.Char,
+                        (int)key,
+                        0
+                        );
+                browser.SendKey(
+                        browser.browser.GetBrowser(),
+                        CefEventFlags.None,
+                        KeyEventType.KeyUp,
+                        (int)key,
+                        0
+                        );
+            }
         }
     }
 }

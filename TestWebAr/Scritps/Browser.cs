@@ -9,35 +9,6 @@ namespace StereoKit.Framework;
 
 public class Browser
 {
-    class NoNewTabLifeSpanHandler : ILifeSpanHandler
-    {
-        public bool DoClose(IWebBrowser chromiumWebBrowser, IBrowser browser) => true;
-
-        public void OnAfterCreated(IWebBrowser chromiumWebBrowser, IBrowser browser) { }
-
-        public void OnBeforeClose(IWebBrowser chromiumWebBrowser, IBrowser browser) { }
-
-        public bool OnBeforePopup(
-            IWebBrowser chromiumWebBrowser,
-            IBrowser browser,
-            IFrame frame,
-            string targetUrl,
-            string targetFrameName,
-            WindowOpenDisposition targetDisposition,
-            bool userGesture,
-            IPopupFeatures popupFeatures,
-            IWindowInfo windowInfo,
-            IBrowserSettings browserSettings,
-            ref bool noJavascriptAccess,
-            out IWebBrowser newBrowser
-        )
-        {
-            browser.MainFrame.LoadUrl(targetUrl);
-            newBrowser = null;
-            return true;
-        }
-    }
-
     public Tex Texture { get; internal set; }
     public string Url
     {
@@ -58,13 +29,16 @@ public class Browser
     public float browserAspect = 9.0f / 16.0f;
     public Material material;
 
-//  Pose windowPosition;
+    Pose windowPosition;
     string userUrl;
     string name;
+    string cachePath;
 
-    public Browser(string url, string name)
+    public Browser(string url, string name, Pose windowPosition, string cachePath)
     {
+        this.cachePath = cachePath;
         this.name = name;
+        this.windowPosition = windowPosition;
 
         Texture = Tex.White;
         Url = url;
@@ -94,20 +68,17 @@ public class Browser
                 "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.79 Mobile Safari/537.36",
             CachePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "CefSharp\\Cache"
+                cachePath
             )
         };
         await Cef.InitializeAsync(
-            settings,
-            performDependencyCheck: true,
-            browserProcessHandler: null
+            settings
         );
 
         browser = new ChromiumWebBrowser(Url);
         await browser.WaitForInitialLoadAsync();
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
-        browser.LifeSpanHandler = new NoNewTabLifeSpanHandler();
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)
@@ -147,7 +118,7 @@ public class Browser
         );
         Vec3 at = p.Closest(Hierarchy.ToLocal(j.position));
 
-        //Mesh.Sphere.Draw(Material.Default, Matrix.TS(at, 0.01f));
+        Mesh.Sphere.Draw(Material.Default, Matrix.TS(at, 0.01f));
 
         Vec3 pt = (at - (bounds.center + (bounds.dimensions * 0.5f)));
         pt = new Vec3(-pt.x / bounds.dimensions.x, -pt.y / bounds.dimensions.y, 0);
@@ -166,19 +137,19 @@ public class Browser
 
     public void UpdateBrowser()
     {
-       // UI.WindowBegin(name, ref windowPosition, V.XY(0.6f, 0), UIWin.Body, UIMove.FaceUser);
+       UI.WindowBegin(name, ref windowPosition, V.XY(0.6f, 0), UIWin.Body, UIMove.FaceUser);
 
        // UI.PushEnabled(this.HasBack);
        // if (UI.Button("Back"))
        //     this.Back();
        // UI.PopEnabled();
-
+       //
        // UI.SameLine();
        // UI.PushEnabled(this.HasForward);
        // if (UI.Button("Forward"))
        //     this.Forward();
        // UI.PopEnabled();
-
+       //
        // UI.SameLine();
        // UI.PanelBegin();
        // if (
@@ -191,8 +162,8 @@ public class Browser
        // }
        // UI.Label(this.Url, V.XY(UI.LayoutRemaining.x, 0));
        // UI.PanelEnd();
-        StepAsUI();
-       // UI.WindowEnd();
+       StepAsUI();
+       UI.WindowEnd();
     }
 
     private void StepAsUI()
