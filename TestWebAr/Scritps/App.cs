@@ -13,6 +13,8 @@ public class App
     Material floorMaterial;
     string userUrl;
 
+    Browser selectedBrowser;
+
     public void Init()
     {
         SKSettings settings = new SKSettings
@@ -37,12 +39,13 @@ public class App
             );
             while (browserList[i].browser == null) {}
             while (!browserList[i].browser.IsBrowserInitialized) {}
+
+            browserList[i].BindBrowserSelect((browser) => { selectedBrowser = browser; });
+            browserList[i].UpdateAudio();
         }
 
         floorMaterial = new Material("floor.hlsl");
         floorMaterial.Transparency = Transparency.Blend;
-
-        userUrl = "https://skylog-m6.broadteam.eu/login";
     }
 
     private void UpdateBrowsers()
@@ -145,32 +148,29 @@ public class App
 
     private void ForwardKeyToCef(VirtualKeyCode key)
     {
-        foreach (Browser browser in browserList) {
-
-            if (browser != null)
-            {
-                 browser.SendKey(
-                        browser.browser.GetBrowser(),
-                        CefEventFlags.None,
-                        KeyEventType.RawKeyDown,
-                        (int)key,
-                        0
-                        );
-                browser.SendKey(
-                        browser.browser.GetBrowser(),
-                        CefEventFlags.None,
-                        KeyEventType.Char,
-                        (int)key,
-                        0
-                        );
-                browser.SendKey(
-                        browser.browser.GetBrowser(),
-                        CefEventFlags.None,
-                        KeyEventType.KeyUp,
-                        (int)key,
-                        0
-                        );
-            }
+        if (selectedBrowser != null)
+        {
+            selectedBrowser.SendKey(
+                   selectedBrowser.browser.GetBrowser(),
+                   CefEventFlags.None,
+                   KeyEventType.RawKeyDown,
+                   (int)key,
+                   0
+                   );
+            selectedBrowser.SendKey(
+                    selectedBrowser.browser.GetBrowser(),
+                    CefEventFlags.None,
+                    KeyEventType.Char,
+                    (int)key,
+                    0
+                    );
+            selectedBrowser.SendKey(
+                    selectedBrowser.browser.GetBrowser(),
+                    CefEventFlags.None,
+                    KeyEventType.KeyUp,
+                    (int)key,
+                    0
+                    );
         }
     }
 }

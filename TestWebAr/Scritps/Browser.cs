@@ -20,6 +20,8 @@ public class Browser
         }
     }
 
+    Action<Browser> setSelectedBrowser;
+
     public ChromiumWebBrowser browser;
     Tex[] tex;
     int texCurr = 0;
@@ -51,7 +53,6 @@ public class Browser
         material = Material.Unlit.Copy();
 
 #if ANYCPU
-        //Only required for PlatformTarget of AnyCPU
         CefRuntime.SubscribeAnyCpuAssemblyResolver();
 #endif
         Init();
@@ -64,11 +65,11 @@ public class Browser
         await browser.WaitForInitialLoadAsync();
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
-        browser.AudioHandler += Caca;
     }
 
-    private void Caca() {
-        Console.WriteLine("caca");
+    public void UpdateAudio()
+    {
+        browser.ToggleAudioMute();
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)
@@ -98,6 +99,11 @@ public class Browser
         browser.GetHost().SendKeyEvent(keyEvent);
     }
 
+    public void BindBrowserSelect(Action<Browser> action)
+    {
+        setSelectedBrowser = action;
+    }
+
     public TouchPoint TouchPoint(Bounds bounds, Handed hand)
     {
         Hand h = Input.Hand(hand);
@@ -112,6 +118,8 @@ public class Browser
 
         Vec3 pt = (at - (bounds.center + (bounds.dimensions * 0.5f)));
         pt = new Vec3(-pt.x / bounds.dimensions.x, -pt.y / bounds.dimensions.y, 0);
+
+        setSelectedBrowser.Invoke(this);
 
         return new TouchPoint
         {
