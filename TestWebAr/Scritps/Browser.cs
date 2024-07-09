@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.DevTools.Input;
@@ -58,27 +57,18 @@ public class Browser
         Init();
     }
 
-    ~Browser() => Cef.Shutdown();
 
     async Task Init()
     {
-        CefSettings settings = new CefSettings
-        {
-            UserAgent =
-                "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.79 Mobile Safari/537.36",
-            CachePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                cachePath
-            )
-        };
-        await Cef.InitializeAsync(
-            settings
-        );
-
         browser = new ChromiumWebBrowser(Url);
         await browser.WaitForInitialLoadAsync();
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
+        browser.AudioHandler += Caca;
+    }
+
+    private void Caca() {
+        Console.WriteLine("caca");
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)
@@ -138,30 +128,6 @@ public class Browser
     public void UpdateBrowser()
     {
        UI.WindowBegin(name, ref windowPosition, V.XY(0.6f, 0), UIWin.Body, UIMove.FaceUser);
-
-       // UI.PushEnabled(this.HasBack);
-       // if (UI.Button("Back"))
-       //     this.Back();
-       // UI.PopEnabled();
-       //
-       // UI.SameLine();
-       // UI.PushEnabled(this.HasForward);
-       // if (UI.Button("Forward"))
-       //     this.Forward();
-       // UI.PopEnabled();
-       //
-       // UI.SameLine();
-       // UI.PanelBegin();
-       // if (
-       //     UI.Input("url", ref userUrl, V.XY(UI.LayoutRemaining.x, 0))
-       //     && Input.Key(Key.Return).IsActive()
-       //     && userUrl != ""
-       // )
-       // {
-       //    this.Url = userUrl;
-       // }
-       // UI.Label(this.Url, V.XY(UI.LayoutRemaining.x, 0));
-       // UI.PanelEnd();
        StepAsUI();
        UI.WindowEnd();
     }

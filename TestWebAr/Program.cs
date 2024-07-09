@@ -5,6 +5,7 @@ namespace TestWebAr
     {
         static void Main(string[] args)
         {
+            CefInstance.InitializeCef();
             App app = new App();
             app.Init();
             SK.Run(() =>
