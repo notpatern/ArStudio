@@ -32,12 +32,11 @@ public class Browser
 
     Pose windowPosition;
     string userUrl;
-    string name;
+    public string name;
     string cachePath;
 
-    public Browser(string url, string name, Pose windowPosition, string cachePath)
+    public Browser(string url, string name, Pose windowPosition)
     {
-        this.cachePath = cachePath;
         this.name = name;
         this.windowPosition = windowPosition;
 
@@ -65,11 +64,7 @@ public class Browser
         await browser.WaitForInitialLoadAsync();
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
-    }
-
-    public void UpdateAudio()
-    {
-        browser.ToggleAudioMute();
+        Mute();
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)
@@ -99,13 +94,30 @@ public class Browser
         browser.GetHost().SendKeyEvent(keyEvent);
     }
 
+    public void Mute()
+    {
+        browser.GetBrowserHost().SetAudioMuted(true);
+        browser.GetBrowserHost().SetFocus(true);
+    }
+
+    public void UnMute()
+    {
+        browser.GetBrowserHost().SetAudioMuted(false);
+        browser.GetBrowserHost().SetFocus(true);
+    }
+
     public void BindBrowserSelect(Action<Browser> action)
     {
-        setSelectedBrowser = action;
+        setSelectedBrowser += action;
+        setSelectedBrowser += (browser) =>
+        {
+            UnMute();
+        };
     }
 
     public TouchPoint TouchPoint(Bounds bounds, Handed hand)
     {
+
         Hand h = Input.Hand(hand);
         HandJoint j = h[FingerId.Index, JointId.Tip];
         Plane p = new Plane(
@@ -114,12 +126,10 @@ public class Browser
         );
         Vec3 at = p.Closest(Hierarchy.ToLocal(j.position));
 
-        Mesh.Sphere.Draw(Material.Default, Matrix.TS(at, 0.01f));
+        //Mesh.Sphere.Draw(Material.Default, Matrix.TS(at, 0.01f));
 
         Vec3 pt = (at - (bounds.center + (bounds.dimensions * 0.5f)));
         pt = new Vec3(-pt.x / bounds.dimensions.x, -pt.y / bounds.dimensions.y, 0);
-
-        setSelectedBrowser.Invoke(this);
 
         return new TouchPoint
         {
@@ -192,6 +202,8 @@ public class Browser
                     DispatchTouchEventType.TouchEnd,
                     new TouchPoint[] { pt }
                 );
+
+            setSelectedBrowser.Invoke(this);
         }
     }
 
@@ -199,6 +211,5 @@ public class Browser
     public bool HasBack => browser == null ? false : browser.CanGoBack;
 
     public void Back() => browser?.Back();
-
     public void Forward() => browser?.Forward();
 }

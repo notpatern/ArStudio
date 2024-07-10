@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="CefSharp.OffScreen.NETCore" Version="126.2.70" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="StereoKit" Version="0.3.*" />
   </ItemGroup>
 

@@ -15,6 +15,8 @@ public class App
 
     Browser selectedBrowser;
 
+    Browser bufferedBrowser = null;
+
     public void Init()
     {
         SKSettings settings = new SKSettings
@@ -27,21 +29,28 @@ public class App
         if (!SK.Initialize(settings))
             Environment.Exit(1);
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 4; i++)
         {
             browserList.Add(
                 new Browser(
                     "https://youtu.be/hCa_X4h5vYQ?si=iaF4NTTOSEKwdhyJ",
                     i.ToString(),
-                    new Pose(0 + i, 0, -0.5f, Quat.LookDir(0, 0, 1)),
-                    "Cache" + i
+                    new Pose(0 + i, 0, -0.5f, Quat.LookDir(0, 0, 1))
                 )
             );
             while (browserList[i].browser == null) {}
             while (!browserList[i].browser.IsBrowserInitialized) {}
 
-            browserList[i].BindBrowserSelect((browser) => { selectedBrowser = browser; });
-            browserList[i].UpdateAudio();
+            browserList[i].BindBrowserSelect((browser) =>
+            {
+                selectedBrowser = browser;
+                Console.WriteLine(browser.name);
+                if (bufferedBrowser != null)
+                {
+                    bufferedBrowser.Mute();                
+                }
+                bufferedBrowser = browser;
+            });
         }
 
         floorMaterial = new Material("floor.hlsl");
