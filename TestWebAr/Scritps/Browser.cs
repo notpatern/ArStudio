@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.DevTools.Input;
@@ -26,6 +27,8 @@ public class Browser
     Tex[] tex;
     int texCurr = 0;
     string url;
+
+    public bool selected = false;
 
     public float browserAspect = 9.0f / 16.0f;
     public Material material;
@@ -97,7 +100,6 @@ public class Browser
     public void Mute()
     {
         browser.GetBrowserHost().SetAudioMuted(true);
-        browser.GetBrowserHost().SetFocus(true);
     }
 
     public void UnMute()
@@ -145,9 +147,17 @@ public class Browser
 
     public void UpdateBrowser()
     {
-       UI.WindowBegin(name, ref windowPosition, V.XY(0.6f, 0), UIWin.Body, UIMove.FaceUser);
-       StepAsUI();
-       UI.WindowEnd();
+        UI.WindowBegin(name, ref windowPosition, V.XY(0.6f, 0), UIWin.Body, UIMove.FaceUser);
+        if (selected)
+        {
+            UI.SetThemeColor(UIColor.Background, Color.White);
+        }
+        else
+        {
+            UI.SetThemeColor(UIColor.Background, Color.Black);
+        }
+        StepAsUI();
+        UI.WindowEnd();
     }
 
     private void StepAsUI()

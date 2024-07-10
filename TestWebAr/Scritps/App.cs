@@ -44,10 +44,11 @@ public class App
             browserList[i].BindBrowserSelect((browser) =>
             {
                 selectedBrowser = browser;
-                Console.WriteLine(browser.name);
-                if (bufferedBrowser != null)
+                browser.selected = true;
+                if (bufferedBrowser != null && bufferedBrowser != selectedBrowser)
                 {
-                    bufferedBrowser.Mute();                
+                    bufferedBrowser.Mute();
+                    bufferedBrowser.selected = false;
                 }
                 bufferedBrowser = browser;
             });
