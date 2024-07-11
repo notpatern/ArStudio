@@ -68,6 +68,8 @@ public class Browser
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
         Mute();
+        InitializeSetVolumerJsFunction();
+        browser.ShowDevTools();
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)
@@ -95,6 +97,30 @@ public class Browser
         };
 
         browser.GetHost().SendKeyEvent(keyEvent);
+    }
+
+    private void InitializeSetVolumerJsFunction()
+    {
+        var script = @"
+            (function() {
+                window.setVolume = function(volume) {
+                    document.querySelectorAll('video, audio').forEach(function(mediaElement) {
+                        mediaElement.volume = volume;
+                    });
+                };
+            })();
+        ";
+
+        browser.ExecuteScriptAsync(script);
+    }
+
+    public void SetVolume(float volume)
+    {
+        if (volume <= 0.02)
+        {
+            volume = 0;
+        }
+        browser.ExecuteScriptAsync($"setVolume({volume.ToString(System.Globalization.CultureInfo.InvariantCulture)});");
     }
 
     public void Mute()

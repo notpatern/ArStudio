@@ -15,7 +15,9 @@ public class App
 
     Browser selectedBrowser;
 
-    Browser bufferedBrowser = null;
+    Browser dirtyBrowser = null;
+
+    VolumeSlider volumeSlider;
 
     public void Init()
     {
@@ -28,6 +30,8 @@ public class App
 
         if (!SK.Initialize(settings))
             Environment.Exit(1);
+
+        volumeSlider = new VolumeSlider("Volume", new Pose(0, 0, -0.5f, Quat.LookDir(0, 0, 1)));
 
         for (int i = 0; i < 4; i++)
         {
@@ -45,13 +49,15 @@ public class App
             {
                 selectedBrowser = browser;
                 browser.selected = true;
-                if (bufferedBrowser != null && bufferedBrowser != selectedBrowser)
+                if (dirtyBrowser != null && dirtyBrowser != selectedBrowser)
                 {
-                    bufferedBrowser.Mute();
-                    bufferedBrowser.selected = false;
+                    dirtyBrowser.Mute();
+                    dirtyBrowser.selected = false;
                 }
-                bufferedBrowser = browser;
+                dirtyBrowser = browser;
             });
+
+            volumeSlider.BindVolumeAction(browserList[i].SetVolume);
         }
 
         floorMaterial = new Material("floor.hlsl");
@@ -77,6 +83,7 @@ public class App
             );
 
         CaptureKeyboardInput();
+        volumeSlider.UpdateSlider();
         UpdateBrowsers();
     }
 
