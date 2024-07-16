@@ -69,7 +69,6 @@ public class Browser
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
         Mute();
         InitializeSetVolumerJsFunction();
-        browser.ShowDevTools();
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)

@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using CefSharp;
 using StereoKit;
 using StereoKit.Framework;
+using TestWebAr.Scritps;
 
 public class App
 {
-    Pose windowPose;
+    ButtonWindow buttonWindow;
+
+    HandTracking handTracking = new HandTracking();
 
     List<Browser> browserList = new List<Browser>();
 
@@ -31,7 +34,7 @@ public class App
         if (!SK.Initialize(settings))
             Environment.Exit(1);
 
-        volumeSlider = new VolumeSlider("Volume", new Pose(0, 0, -0.5f, Quat.LookDir(0, 0, 1)));
+        volumeSlider = new VolumeSlider("Volume", new Pose(0, 0, -0.3f, Quat.LookDir(0, 0, 1)));
 
         for (int i = 0; i < 4; i++)
         {
@@ -62,6 +65,8 @@ public class App
 
         floorMaterial = new Material("floor.hlsl");
         floorMaterial.Transparency = Transparency.Blend;
+
+        buttonWindow = new ButtonWindow("buttons", new Pose(0.4f, 0, -0.3f, Quat.LookDir(0, 0, 1))); 
     }
 
     private void UpdateBrowsers()
@@ -85,6 +90,7 @@ public class App
         CaptureKeyboardInput();
         volumeSlider.UpdateSlider();
         UpdateBrowsers();
+        buttonWindow.UpdateWindow();
     }
 
     // ------------------------------------------------------------------------------------------------------------
