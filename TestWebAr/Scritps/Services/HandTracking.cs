@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Timers;
 
-namespace TestWebAr.Scritps
+namespace TestWebAr.Scritps.Services
 {
     public class HandTracking
     {
@@ -35,10 +35,10 @@ namespace TestWebAr.Scritps
         double radianLeftHandHorizontalAngle;
 
         double degreeRightHandVerticalAngle;
-        double degreeLeftHandVerticalAngle; 
+        double degreeLeftHandVerticalAngle;
 
         double degreeRightHandHorizontalAngle;
-        double degreeLeftHandHorizontalAngle; 
+        double degreeLeftHandHorizontalAngle;
 
         Vec2 rightHandAnglesDegree = new Vec2();
         Vec2 leftHandAnglesDegree = new Vec2();
@@ -52,7 +52,7 @@ namespace TestWebAr.Scritps
         Vec3 rightHandRelativeVelocity = new Vec3();
         Vec3 leftHandRelativeVelocity = new Vec3();
 
-        public HandTracking() 
+        public HandTracking()
         {
             Init();
         }
@@ -88,10 +88,10 @@ namespace TestWebAr.Scritps
             rightHandRelativePosition = rightHandPosition - headPosition;
             leftHandRelativePosition = leftHandPosition - headPosition;
 
-            rightHandVelocity = CalculateVelocity(dirtyRightHandPosition, rightHandPosition); 
-            leftHandVelocity = CalculateVelocity(dirtyLeftHandPosition, leftHandPosition); 
-            rightHandRelativeVelocity = CalculateVelocity(dirtyRightHandRelativePosition, rightHandRelativePosition); 
-            leftHandRelativeVelocity = CalculateVelocity(dirtyLeftHandRelativePosition, leftHandRelativePosition); 
+            rightHandVelocity = CalculateVelocity(dirtyRightHandPosition, rightHandPosition);
+            leftHandVelocity = CalculateVelocity(dirtyLeftHandPosition, leftHandPosition);
+            rightHandRelativeVelocity = CalculateVelocity(dirtyRightHandRelativePosition, rightHandRelativePosition);
+            leftHandRelativeVelocity = CalculateVelocity(dirtyLeftHandRelativePosition, leftHandRelativePosition);
 
             dirtyRightHandPosition = rightHandPosition;
             dirtyLeftHandPosition = leftHandPosition;
@@ -110,7 +110,7 @@ namespace TestWebAr.Scritps
 
             //TODO: refacto custom types Vector3 double
 
-            velocity = (pointB - pointA) * (float)(1/ fixedDeltaTime) * 100;
+            velocity = (pointB - pointA) * (float)(1 / fixedDeltaTime) * 100;
 
             return velocity;
         }
@@ -131,11 +131,11 @@ namespace TestWebAr.Scritps
 
         private void CalculateDegreeAngles()
         {
-            degreeRightHandVerticalAngle = (180 / Math.PI) * radianRightHandVerticalAngle;
-            degreeLeftHandVerticalAngle = (180 / Math.PI) * radianLeftHandVerticalAngle;
+            degreeRightHandVerticalAngle = 180 / Math.PI * radianRightHandVerticalAngle;
+            degreeLeftHandVerticalAngle = 180 / Math.PI * radianLeftHandVerticalAngle;
 
-            degreeRightHandHorizontalAngle = (180 / Math.PI) * radianRightHandHorizontalAngle;
-            degreeLeftHandHorizontalAngle = (180 / Math.PI) * radianLeftHandHorizontalAngle;
+            degreeRightHandHorizontalAngle = 180 / Math.PI * radianRightHandHorizontalAngle;
+            degreeLeftHandHorizontalAngle = 180 / Math.PI * radianLeftHandHorizontalAngle;
 
             rightHandAnglesDegree.x = (float)degreeRightHandHorizontalAngle;
             rightHandAnglesDegree.y = (float)degreeRightHandVerticalAngle;
@@ -148,7 +148,6 @@ namespace TestWebAr.Scritps
         {
             if (rightHandRelativeVelocity.y >= 300 && rightHandAnglesDegree.y >= 25)
             {
-
                 Console.WriteLine("EventTriggered");
                 Console.WriteLine();
             }

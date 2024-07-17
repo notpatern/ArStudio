@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using CefSharp;
 using StereoKit;
-using StereoKit.Framework;
 using TestWebAr.Scritps;
+using TestWebAr.Scritps.Objects;
 
 public class App
 {

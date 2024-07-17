@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.DevTools.Input;
 using CefSharp.OffScreen;
+using StereoKit;
 
-namespace StereoKit.Framework;
+namespace TestWebAr.Scritps.Objects;
 
 public class Browser
 {
@@ -155,7 +156,7 @@ public class Browser
 
         //Mesh.Sphere.Draw(Material.Default, Matrix.TS(at, 0.01f));
 
-        Vec3 pt = (at - (bounds.center + (bounds.dimensions * 0.5f)));
+        Vec3 pt = at - (bounds.center + bounds.dimensions * 0.5f);
         pt = new Vec3(-pt.x / bounds.dimensions.x, -pt.y / bounds.dimensions.y, 0);
 
         return new TouchPoint

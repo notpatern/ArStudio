@@ -1,17 +1,18 @@
 ﻿
 using StereoKit;
 
-namespace TestWebAr.Scritps
+namespace TestWebAr.Scritps.Objects
 {
     public class ButtonWindow
     {
         string name;
         Pose position;
-        public ButtonWindow(string name, Pose position) { 
+        public ButtonWindow(string name, Pose position)
+        {
             this.name = name;
             this.position = position;
         }
-        
+
         public void UpdateWindow()
         {
             UI.WindowBegin("Buttons", ref position);
