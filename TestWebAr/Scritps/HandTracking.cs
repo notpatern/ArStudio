@@ -1,12 +1,16 @@
 ﻿
 using StereoKit;
 using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Timers;
 
 namespace TestWebAr.Scritps
 {
     public class HandTracking
     {
+        //TODO: make custom types or structs for the values (degree/radian)
+        double fixedDeltaTime = 0.02;
         Timer handTrackingTimer = new Timer(0020); // hard coded fixed amount
 
         Vec3 headForward;
@@ -17,6 +21,12 @@ namespace TestWebAr.Scritps
 
         Vec3 rightHandRelativePosition;
         Vec3 leftHandRelativePosition;
+
+        Vec3 dirtyRightHandPosition = new Vec3();
+        Vec3 dirtyLeftHandPosition = new Vec3();
+
+        Vec3 dirtyRightHandRelativePosition = new Vec3();
+        Vec3 dirtyLeftHandRelativePosition = new Vec3();
 
         double radianRightHandVerticalAngle;
         double radianLeftHandVerticalAngle;
@@ -36,8 +46,11 @@ namespace TestWebAr.Scritps
         Vec2 rightHandAnglesRadian = new Vec2();
         Vec2 leftHandAnglesRadian = new Vec2();
 
-        Vec2 rightHandVelocity = new Vec2();
-        Vec2 leftHandVelocity = new Vec2();
+        Vec3 rightHandVelocity = new Vec3();
+        Vec3 leftHandVelocity = new Vec3();
+
+        Vec3 rightHandRelativeVelocity = new Vec3();
+        Vec3 leftHandRelativeVelocity = new Vec3();
 
         public HandTracking() 
         {
@@ -74,6 +87,32 @@ namespace TestWebAr.Scritps
 
             rightHandRelativePosition = rightHandPosition - headPosition;
             leftHandRelativePosition = leftHandPosition - headPosition;
+
+            rightHandVelocity = CalculateVelocity(dirtyRightHandPosition, rightHandPosition); 
+            leftHandVelocity = CalculateVelocity(dirtyLeftHandPosition, leftHandPosition); 
+            rightHandRelativeVelocity = CalculateVelocity(dirtyRightHandRelativePosition, rightHandRelativePosition); 
+            leftHandRelativeVelocity = CalculateVelocity(dirtyLeftHandRelativePosition, leftHandRelativePosition); 
+
+            dirtyRightHandPosition = rightHandPosition;
+            dirtyLeftHandPosition = leftHandPosition;
+            dirtyRightHandRelativePosition = rightHandRelativePosition;
+            dirtyLeftHandRelativePosition = leftHandRelativePosition;
+        }
+
+        private Vec3 CalculateVelocity(Vec3 pointA, Vec3 pointB)
+        {
+            Vec3 velocity = new Vec3();
+
+            if (Vec3.Distance(pointA, pointB) == 0)
+            {
+                return new Vec3();
+            }
+
+            //TODO: refacto custom types Vector3 double
+
+            velocity = (pointB - pointA) * (float)(1/ fixedDeltaTime) * 100;
+
+            return velocity;
         }
 
         private void CalculateRadianAngles()
@@ -107,10 +146,11 @@ namespace TestWebAr.Scritps
 
         private void UpdateHandTrackingChecks(object sender, ElapsedEventArgs e)
         {
-            Console.Clear();
-            Console.WriteLine($"Xangle : {degreeRightHandHorizontalAngle}, Yangle : {degreeRightHandVerticalAngle}");
-            if (rightHandAnglesDegree.x >= 25 && rightHandAnglesDegree.y >= 25)
+            if (rightHandRelativeVelocity.y >= 300 && rightHandAnglesDegree.y >= 25)
             {
+
+                Console.WriteLine("EventTriggered");
+                Console.WriteLine();
             }
         }
     }
