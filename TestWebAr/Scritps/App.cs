@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using CefSharp;
 using StereoKit;
-using TestWebAr.Scritps;
 using TestWebAr.Scritps.Objects;
+using TestWebAr.Scritps.Services;
 
 public class App
 {
@@ -42,7 +42,7 @@ public class App
                 new Browser(
                     "https://youtu.be/hCa_X4h5vYQ?si=iaF4NTTOSEKwdhyJ",
                     i.ToString(),
-                    new Pose(0 + i, 0, -0.5f, Quat.LookDir(0, 0, 1))
+                    new Pose(0.75f * i, 0, -0.5f, Quat.LookDir(0, 0, 1))
                 )
             );
             while (browserList[i].browser == null) {}
@@ -52,21 +52,21 @@ public class App
             {
                 selectedBrowser = browser;
                 browser.selected = true;
-                if (dirtyBrowser != null && dirtyBrowser != selectedBrowser)
-                {
+                if (dirtyBrowser != null && dirtyBrowser != selectedBrowser){
                     dirtyBrowser.Mute();
                     dirtyBrowser.selected = false;
                 }
                 dirtyBrowser = browser;
             });
-
             volumeSlider.BindVolumeAction(browserList[i].SetVolume);
         }
 
         floorMaterial = new Material("floor.hlsl");
         floorMaterial.Transparency = Transparency.Blend;
 
-        buttonWindow = new ButtonWindow("buttons", new Pose(0.4f, 0, -0.3f, Quat.LookDir(0, 0, 1))); 
+        buttonWindow = new ButtonWindow("buttons", new Pose(0.4f, 0, -0.3f, Quat.LookDir(0, 0, 1)));
+
+        handTracking.RightFastHand += LoadUrl;
     }
 
     private void UpdateBrowsers()
@@ -75,6 +75,13 @@ public class App
         {
             browser.UpdateBrowser();
         }
+    }
+
+    private void LoadUrl(string url) {
+        if (selectedBrowser == null) {
+            return;
+        }
+        selectedBrowser.browser.LoadUrl(url);
     }
 
     public void Update()

@@ -1,8 +1,6 @@
 ﻿
 using StereoKit;
 using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Timers;
 
 namespace TestWebAr.Scritps.Services
@@ -51,6 +49,8 @@ namespace TestWebAr.Scritps.Services
 
         Vec3 rightHandRelativeVelocity = new Vec3();
         Vec3 leftHandRelativeVelocity = new Vec3();
+
+        public Action<string> RightFastHand;
 
         public HandTracking()
         {
@@ -146,10 +146,14 @@ namespace TestWebAr.Scritps.Services
 
         private void UpdateHandTrackingChecks(object sender, ElapsedEventArgs e)
         {
-            if (rightHandRelativeVelocity.y >= 300 && rightHandAnglesDegree.y >= 25)
+            if (rightHandRelativeVelocity.x >= 200 && rightHandAnglesDegree.x >= 45)
             {
-                Console.WriteLine("EventTriggered");
-                Console.WriteLine();
+                RightFastHand.Invoke("https://github.com/");
+            }
+
+            if (rightHandRelativeVelocity.x <= -200 && rightHandAnglesDegree.x <= -45)
+            {
+                RightFastHand.Invoke("https://github.com/notpatern/TestAr/blob/main/TestWebAr/Scritps/App.cs");
             }
         }
     }
