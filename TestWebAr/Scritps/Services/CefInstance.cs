@@ -17,6 +17,8 @@ public static class CefInstance {
         };
 
         settings.CefCommandLineArgs.Remove("mute-audio");
+        settings.CefCommandLineArgs.Add("ffmpeg-branding=Chrome", "1");
+        settings.CefCommandLineArgs.Add("proprietary-codecs=1");
 
         await Cef.InitializeAsync(
             settings

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CefSharp;
 using StereoKit;
+using StereoKit.Framework;
 using TestWebAr.Scritps.Objects;
 using TestWebAr.Scritps.Services;
 
@@ -28,11 +29,16 @@ public class App
         {
             appName = "TestWebAr",
             assetsFolder = "Assets",
-            mode = AppMode.Simulator
+            blendPreference = DisplayBlend.AnyTransparent,
+            mode = AppMode.XR
         };
+
+        var passthroughStepper = SK.AddStepper(new PassthroughFBExt());
 
         if (!SK.Initialize(settings))
             Environment.Exit(1);
+
+        passthroughStepper.EnabledPassthrough = true;
 
         volumeSlider = new VolumeSlider("Volume", new Pose(0, 0, -0.3f, Quat.LookDir(0, 0, 1)));
 
@@ -40,7 +46,9 @@ public class App
         {
             browserList.Add(
                 new Browser(
-                    "https://youtu.be/hCa_X4h5vYQ?si=iaF4NTTOSEKwdhyJ",
+                    "https://skylog-m6.broadteam.eu/login",
+
+
                     i.ToString(),
                     new Pose(0.75f * i, 0, -0.5f, Quat.LookDir(0, 0, 1))
                 )
@@ -67,6 +75,7 @@ public class App
         buttonWindow = new ButtonWindow("buttons", new Pose(0.4f, 0, -0.3f, Quat.LookDir(0, 0, 1)));
 
         handTracking.RightFastHand += LoadUrl;
+        handTracking.LeftHandDownFast += LogInRadioEdit;
     }
 
     private void UpdateBrowsers()
@@ -75,6 +84,12 @@ public class App
         {
             browser.UpdateBrowser();
         }
+    }
+
+    private void LogInRadioEdit() {
+        ForwardKeyToCef(VirtualKeyCode.VK_M);
+        ForwardKeyToCef(VirtualKeyCode.VK_6);
+        ForwardKeyToCef(VirtualKeyCode.TAB);
     }
 
     private void LoadUrl(string url) {
@@ -86,14 +101,6 @@ public class App
 
     public void Update()
     {
-        if (SK.System.displayType == Display.Opaque)
-            Default.MeshCube.Draw(
-                floorMaterial,
-                World.HasBounds
-                    ? World.BoundsPose.ToMatrix(new Vec3(30, 0.1f, 30))
-                    : Matrix.TS(0, -1.5f, 0, new Vec3(30, 0.1f, 30))
-            );
-
         CaptureKeyboardInput();
         volumeSlider.UpdateSlider();
         UpdateBrowsers();

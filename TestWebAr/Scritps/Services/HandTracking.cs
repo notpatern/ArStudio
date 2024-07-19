@@ -51,6 +51,7 @@ namespace TestWebAr.Scritps.Services
         Vec3 leftHandRelativeVelocity = new Vec3();
 
         public Action<string> RightFastHand;
+        public Action LeftHandDownFast;
 
         public HandTracking()
         {
@@ -154,6 +155,10 @@ namespace TestWebAr.Scritps.Services
             if (rightHandRelativeVelocity.x <= -200 && rightHandAnglesDegree.x <= -45)
             {
                 RightFastHand.Invoke("https://github.com/notpatern/TestAr/blob/main/TestWebAr/Scritps/App.cs");
+            }
+
+            if (leftHandAnglesDegree.y <= 15 && leftHandRelativeVelocity.y <= -150) {
+                LeftHandDownFast.Invoke();
             }
         }
     }
