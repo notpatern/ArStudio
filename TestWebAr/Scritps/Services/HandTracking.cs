@@ -149,12 +149,12 @@ namespace TestWebAr.Scritps.Services
         {
             if (rightHandRelativeVelocity.x >= 200 && rightHandAnglesDegree.x >= 45)
             {
-                RightFastHand.Invoke("https://github.com/");
+                //RightFastHand.Invoke("https://github.com/");
             }
 
             if (rightHandRelativeVelocity.x <= -200 && rightHandAnglesDegree.x <= -45)
             {
-                RightFastHand.Invoke("https://github.com/notpatern/TestAr/blob/main/TestWebAr/Scritps/App.cs");
+                //RightFastHand.Invoke("https://github.com/notpatern/TestAr/blob/main/TestWebAr/Scritps/App.cs");
             }
 
             if (leftHandAnglesDegree.y <= 15 && leftHandRelativeVelocity.y <= -150) {

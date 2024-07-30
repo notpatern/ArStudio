@@ -42,13 +42,11 @@ public class App
 
         volumeSlider = new VolumeSlider("Volume", new Pose(0, 0, -0.3f, Quat.LookDir(0, 0, 1)));
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 1; i++)
         {
             browserList.Add(
                 new Browser(
-                    "https://skylog-m6.broadteam.eu/login",
-
-
+                    "https://skylog-m6.broadteam.eu/multiview",
                     i.ToString(),
                     new Pose(0.75f * i, 0, -0.5f, Quat.LookDir(0, 0, 1))
                 )

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.DevTools.Input;
@@ -70,6 +69,7 @@ public class Browser
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
         Mute();
         InitializeSetVolumerJsFunction();
+        browser.ShowDevTools();
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)
