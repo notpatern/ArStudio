@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArStudio", "ArStudio\ArStudio.csproj", "{356926CA-E663-4975-8A46-1AF5F7042DB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{356926CA-E663-4975-8A46-1AF5F7042DB0}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{356926CA-E663-4975-8A46-1AF5F7042DB0}.Debug|Any CPU.Build.0 = Debug|x64
+		{356926CA-E663-4975-8A46-1AF5F7042DB0}.Release|Any CPU.ActiveCfg = Release|x64
+		{356926CA-E663-4975-8A46-1AF5F7042DB0}.Release|Any CPU.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F3CA5E10-13FA-477A-B93A-3E251CA9285B}
+	EndGlobalSection
+EndGlobal
