@@ -19,9 +19,8 @@ public static class CefInstance {
         settings.CefCommandLineArgs.Add("enable-widevine-cdm", "1");
         settings.CefCommandLineArgs.Add("ignore-certificate-errors", "1");
         settings.CefCommandLineArgs.Add("enable-gpu-rasterization", "1");
-        settings.CefCommandLineArgs.Add("disable-gpu", "0"); // Ensure GPU acceleration is not disabled
+        settings.CefCommandLineArgs.Add("disable-gpu", "0"); 
 
-        // Optional: Check if your codecs are included
         settings.CefCommandLineArgs.Add("enable-media-stream", "1");
         settings.CefCommandLineArgs.Add("enable-features", "NetworkService,NetworkServiceInProcess");
 
