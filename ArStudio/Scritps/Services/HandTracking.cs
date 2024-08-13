@@ -53,7 +53,7 @@ namespace TestWebAr.Scritps.Services
         Vec3 rightHandRelativeVelocity = new Vec3();
         Vec3 leftHandRelativeVelocity = new Vec3();
 
-        public Action<string> RightFastHand;
+        public Action RightFastHand;
         public Action LeftHandDownFast;
 
         public Action NewLog;
@@ -169,13 +169,23 @@ namespace TestWebAr.Scritps.Services
         {
             if (Vec3.Distance(leftHand.palm.position, rightHand.palm.position) <= 0.07f)
             {
-                if (leftHandVelocity.x >= 120 && rightHandVelocity.x <= 120)
+                if (leftHandVelocity.x >= 100 && rightHandVelocity.x <= 100)
                 {
                     if (leftHand.IsGripped && rightHand.IsGripped)
                     {
                         Pause.Invoke();
                     }
+
+                    if (Vec3.Dot(rightHand.palm.Forward, leftHand.palm.Forward) <= -0.60 && !(leftHand.IsGripped && rightHand.IsGripped))
+                    {
+                        Play.Invoke();
+                    }
                 }
+            }
+
+            if (rightHandVelocity.y <= -140 && rightHandAnglesDegree.y <= 15)
+            {
+                RightFastHand.Invoke(); 
             }
         }
     }

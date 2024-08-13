@@ -45,7 +45,8 @@ public class App
         {
             browserList.Add(
                 new Browser(
-                    "http://192.168.101.52:23800/login",
+                    "https://javascript.info/keyboard-events",
+                    //"http://192.168.101.52:23800/login",
 
                     i.ToString(),
                     new Pose(0.75f * i, 0, -0.5f, Quat.LookDir(0, 0, 1))
@@ -74,6 +75,8 @@ public class App
         buttonWindow = new ButtonWindow("buttons", new Pose(0.4f, 0, -0.3f, Quat.LookDir(0, 0, 1)));
 
         handTracking.Pause += PauseVideo;
+        handTracking.Play += PlayVideo;
+        handTracking.RightFastHand += LogInRadioEdit;
     }
 
     private void UpdateBrowsers()
@@ -86,64 +89,41 @@ public class App
 
     private void LogInRadioEdit()
     {
-        ForwardKeyToCef(VirtualKeyCode.VK_M);
-        ForwardKeyToCef(VirtualKeyCode.VK_6);
+        ForwardKeyToCef(VirtualKeyCode.VK_T);
+        ForwardKeyToCef(VirtualKeyCode.VK_E);
+        ForwardKeyToCef(VirtualKeyCode.VK_S);
+        ForwardKeyToCef(VirtualKeyCode.VK_T);
         ForwardKeyToCef(VirtualKeyCode.TAB);
     }
 
-    private void PauseVideo()
+    private void PlayVideo()
     {
-        Console.WriteLine("caca");
         if (selectedBrowser != null)
         {
-            // CTRL key down event
-            int ctrlKeyCode = (int)VirtualKeyCode.VK_CONTROL;
+            Console.WriteLine("caca");
+            var browser = selectedBrowser.browser.GetBrowser();
+
             selectedBrowser.SendKey(
-                selectedBrowser.browser.GetBrowser(),
+                browser,
                 CefEventFlags.ControlDown,
-                KeyEventType.KeyDown,
-                ctrlKeyCode,  // Use the virtual keycode for CTRL
+                KeyEventType.RawKeyDown,
+                (int)VirtualKeyCode.VK_SPACE,  // SPACE key
                 0
             );
 
-            // 'P' key down event
-            int pKeyCode = (int)VirtualKeyCode.VK_P;
             selectedBrowser.SendKey(
-                selectedBrowser.browser.GetBrowser(),
-                CefEventFlags.ControlDown,
-                KeyEventType.KeyDown,
-                pKeyCode,  // Use the virtual keycode for 'P'
-                0
-            );
-
-            // 'P' key char event (optional)
-            int pCharCode = pKeyCode; // 'P' doesn't need to be converted to lowercase
-            selectedBrowser.SendKey(
-                selectedBrowser.browser.GetBrowser(),
-                CefEventFlags.ControlDown,
-                KeyEventType.Char,
-                pCharCode,
-                0
-            );
-
-            // 'P' key up event
-            selectedBrowser.SendKey(
-                selectedBrowser.browser.GetBrowser(),
-                CefEventFlags.ControlDown,
-                KeyEventType.KeyUp,
-                pKeyCode,  // Use the virtual keycode for 'P'
-                0
-            );
-
-            // CTRL key up event
-            selectedBrowser.SendKey(
-                selectedBrowser.browser.GetBrowser(),
+                browser,
                 CefEventFlags.None,
                 KeyEventType.KeyUp,
-                ctrlKeyCode,  // Use the virtual keycode for CTRL
+                (int)VirtualKeyCode.VK_SPACE,  // SPACE key
                 0
             );
         }
+    }
+
+    void PauseVideo()
+    {
+        ForwardKeyToCef(VirtualKeyCode.VK_P, ctrl: true);
     }
 
     public void Update()
@@ -197,7 +177,7 @@ public class App
         CheckAndForwardKey(Key.N8, VirtualKeyCode.VK_8);
         CheckAndForwardKey(Key.N9, VirtualKeyCode.VK_9);
 
-        CheckAndForwardKey(Key.Space, VirtualKeyCode.SPACE);
+        CheckAndForwardKey(Key.Space, VirtualKeyCode.VK_SPACE);
         CheckAndForwardKey(Key.Return, VirtualKeyCode.RETURN);
         CheckAndForwardKey(Key.Backspace, VirtualKeyCode.BACK);
         CheckAndForwardKey(Key.Tab, VirtualKeyCode.TAB);
@@ -230,80 +210,72 @@ public class App
         }
     }
 
-    //    private void ForwardKeyToCef(VirtualKeyCode key)
-    //    {
-    //        if (selectedBrowser != null)
-    //        {
-    //
-    //            selectedBrowser.SendKey(
-    //                   selectedBrowser.browser.GetBrowser(),
-    //                   CefEventFlags.None,
-    //                   KeyEventType.KeyDown,
-    //                   (int)key,
-    //                   0
-    //                   );
-    //            selectedBrowser.SendKey(
-    //                    selectedBrowser.browser.GetBrowser(),
-    //                    CefEventFlags.None,
-    //                    KeyEventType.Char,
-    //                    (int)key,
-    //                    0
-    //                    );
-    //            selectedBrowser.SendKey(
-    //                    selectedBrowser.browser.GetBrowser(),
-    //                    CefEventFlags.None,
-    //                    KeyEventType.KeyUp,
-    //                    (int)key,
-    //                    0
-    //                    );
-    //        }
-    //    }
-    //}
-
-    private void ForwardKeyToCef(VirtualKeyCode key)
+    private void ForwardKeyToCef(VirtualKeyCode key, bool ctrl = false, bool lowerCase = false)
     {
         if (selectedBrowser != null)
         {
-            // Determine if the key is an uppercase letter
             int keyCode = (int)key;
             int charCode = keyCode;
 
-            if (keyCode >= (int)VirtualKeyCode.VK_A && keyCode <= (int)VirtualKeyCode.VK_Z)
+            if (lowerCase)
             {
-                // Convert the uppercase letter keycode to a lowercase ASCII character
-                charCode = keyCode + 32;
+                if (keyCode >= (int)VirtualKeyCode.VK_A && keyCode <= (int)VirtualKeyCode.VK_Z)
+                {
+                    charCode = keyCode + 32;
+                }
             }
 
-            // Send KeyDown event
+            if (ctrl)
+            {
+                selectedBrowser.SendKey(
+                    selectedBrowser.browser.GetBrowser(),
+                    CefEventFlags.ControlDown,
+                    KeyEventType.KeyDown,
+                    (int)VirtualKeyCode.VK_CONTROL,  // CTRL key
+                    0
+                );
+            }
+
             selectedBrowser.SendKey(
                 selectedBrowser.browser.GetBrowser(),
-                CefEventFlags.None,
+                ctrl ? CefEventFlags.ControlDown : CefEventFlags.None,
                 KeyEventType.KeyDown,
-                keyCode,  // Use the virtual keycode for KeyDown
+                keyCode,  
                 0
             );
 
-            // Send Char event with the lowercase character code
-            selectedBrowser.SendKey(
-                selectedBrowser.browser.GetBrowser(),
-                CefEventFlags.None,
-                KeyEventType.Char,
-                charCode,  // Use the actual lowercase character code
-                0
-            );
+            if (charCode >= 32 && charCode <= 126) 
+            {
+                selectedBrowser.SendKey(
+                    selectedBrowser.browser.GetBrowser(),
+                    ctrl ? CefEventFlags.ControlDown : CefEventFlags.None,
+                    KeyEventType.Char,
+                    charCode,  
+                    0
+                );
+            }
 
-            // Send KeyUp event
             selectedBrowser.SendKey(
                 selectedBrowser.browser.GetBrowser(),
-                CefEventFlags.None,
+                ctrl ? CefEventFlags.ControlDown : CefEventFlags.None,
                 KeyEventType.KeyUp,
-                keyCode,  // Use the virtual keycode for KeyUp
+                keyCode,                
                 0
             );
+
+            if (ctrl)
+            {
+                selectedBrowser.SendKey(
+                    selectedBrowser.browser.GetBrowser(),
+                    CefEventFlags.ControlDown,
+                    KeyEventType.KeyUp,
+                    (int)VirtualKeyCode.VK_CONTROL,  
+                    0
+                );
+            }
         }
     }
 }
-
 
 public enum VirtualKeyCode
 {
@@ -344,7 +316,7 @@ public enum VirtualKeyCode
     VK_7 = 0x37,
     VK_8 = 0x38,
     VK_9 = 0x39,
-    SPACE = 0x20,
+    VK_SPACE = 32,
     RETURN = 0x0D,
     BACK = 0x08,
     TAB = 0x09,
