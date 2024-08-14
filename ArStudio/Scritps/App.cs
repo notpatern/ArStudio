@@ -45,8 +45,8 @@ public class App
         {
             browserList.Add(
                 new Browser(
-                    "https://javascript.info/keyboard-events",
-                    //"http://192.168.101.52:23800/login",
+                    //"https://javascript.info/keyboard-events",
+                    "http://192.168.101.52:23800/login",
 
                     i.ToString(),
                     new Pose(0.75f * i, 0, -0.5f, Quat.LookDir(0, 0, 1))
@@ -98,27 +98,48 @@ public class App
 
     private void PlayVideo()
     {
-        if (selectedBrowser != null)
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        // Send the Ctrl (Left) keydown event
+        var ctrlDownEvent = new KeyEvent
         {
-            Console.WriteLine("caca");
-            var browser = selectedBrowser.browser.GetBrowser();
+            WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
+            NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
+            Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Ctrl
+            Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is down
+        };
+        browserHost.SendKeyEvent(ctrlDownEvent);
 
-            selectedBrowser.SendKey(
-                browser,
-                CefEventFlags.ControlDown,
-                KeyEventType.RawKeyDown,
-                (int)VirtualKeyCode.VK_SPACE,  // SPACE key
-                0
-            );
+        // Send the Space keydown event
+        var spaceDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x20,                             // VK_SPACE (Space key)
+            NativeKeyCode = 0x39,                              // Scan code for Space (common value)
+            Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Space
+            Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
+        };
+        browserHost.SendKeyEvent(spaceDownEvent);
 
-            selectedBrowser.SendKey(
-                browser,
-                CefEventFlags.None,
-                KeyEventType.KeyUp,
-                (int)VirtualKeyCode.VK_SPACE,  // SPACE key
-                0
-            );
-        }
+        // Send the Space keyup event
+        var spaceUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x20,                             // VK_SPACE (Space key)
+            NativeKeyCode = 0x39,                              // Scan code for Space (common value)
+            Type = KeyEventType.KeyUp,                         // KeyUp event for Space
+            Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
+        };
+        browserHost.SendKeyEvent(spaceUpEvent);
+
+        // Send the Ctrl (Left) keyup event
+        var ctrlUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
+            NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
+            Type = KeyEventType.KeyUp,                         // KeyUp event for Ctrl
+            Modifiers = CefEventFlags.None                     // No modifiers as Ctrl is being released
+        };
+        browserHost.SendKeyEvent(ctrlUpEvent);
+
     }
 
     void PauseVideo()
@@ -316,7 +337,7 @@ public enum VirtualKeyCode
     VK_7 = 0x37,
     VK_8 = 0x38,
     VK_9 = 0x39,
-    VK_SPACE = 32,
+    VK_SPACE = 0x20,
     RETURN = 0x0D,
     BACK = 0x08,
     TAB = 0x09,
