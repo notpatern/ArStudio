@@ -76,6 +76,13 @@ public class App
 
         handTracking.Pause += PauseVideo;
         handTracking.Play += PlayVideo;
+        handTracking.NewLog += NewLog;
+        handTracking.CloseLog += CloseLog;
+        handTracking.CancelLog += CancelLog;
+        handTracking.CancelOpenLog += CancelOpenLog;
+        handTracking.CopyPlayerTimeCode += CopyPlayerTimeCode;
+        handTracking.Tab += Tab;
+        handTracking.BackToLive += BackToLive;
         handTracking.RightFastHand += LogInRadioEdit;
     }
 
@@ -95,6 +102,284 @@ public class App
         ForwardKeyToCef(VirtualKeyCode.VK_T);
         ForwardKeyToCef(VirtualKeyCode.TAB);
     }
+    
+    private void CopyPlayerTimeCode()
+    {
+        if (selectedBrowser == null)
+            return;
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        // Send the Space keydown event
+        var spaceDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x20,                             // VK_SPACE (Space key)
+            NativeKeyCode = 0x39,                              // Scan code for Space
+            Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Space
+            Modifiers = CefEventFlags.None                     // No modifiers
+        };
+        browserHost.SendKeyEvent(spaceDownEvent);
+
+        // Send the Space keyup event
+        var spaceUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x20,                             // VK_SPACE (Space key)
+            NativeKeyCode = 0x39,                              // Scan code for Space
+            Type = KeyEventType.KeyUp,                         // KeyUp event for Space
+            Modifiers = CefEventFlags.None                     // No modifiers
+        };
+        browserHost.SendKeyEvent(spaceUpEvent);
+    }
+
+    private void BackToLive() {
+        if (selectedBrowser == null)
+            return;
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        // Send the Ctrl (Left) keydown event
+        var ctrlDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
+                           NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
+                           Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Ctrl
+                           Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is down
+        };
+        browserHost.SendKeyEvent(ctrlDownEvent);
+
+        // Send the L keydown event
+        var lDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x4C,                             // VK_L (L key)
+                           NativeKeyCode = 0x26,                              // Scan code for L
+                           Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for L
+                           Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
+        };
+        browserHost.SendKeyEvent(lDownEvent);
+
+        // Send the L keyup event
+        var lUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x4C,                             // VK_L (L key)
+                           NativeKeyCode = 0x26,                              // Scan code for L
+                           Type = KeyEventType.KeyUp,                         // KeyUp event for L
+                           Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
+        };
+        browserHost.SendKeyEvent(lUpEvent);
+
+        // Send the Ctrl (Left) keyup event
+        var ctrlUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
+                           NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
+                           Type = KeyEventType.KeyUp,                         // KeyUp event for Ctrl
+                           Modifiers = CefEventFlags.None                     // No modifiers as Ctrl is being released
+        };
+        browserHost.SendKeyEvent(ctrlUpEvent);
+    }
+
+    private void Tab()
+    {
+        if (selectedBrowser == null)
+            return;
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        // Send the Tab keydown event
+        var tabDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x09,                             // VK_TAB (Tab key)
+            NativeKeyCode = 0x0F,                              // Scan code for Tab
+            Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Tab
+            Modifiers = CefEventFlags.None                     // No modifiers
+        };
+        browserHost.SendKeyEvent(tabDownEvent);
+
+        // Send the Tab keyup event
+        var tabUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x09,                             // VK_TAB (Tab key)
+            NativeKeyCode = 0x0F,                              // Scan code for Tab
+            Type = KeyEventType.KeyUp,                         // KeyUp event for Tab
+            Modifiers = CefEventFlags.None                     // No modifiers
+        };
+        browserHost.SendKeyEvent(tabUpEvent);
+    }
+
+    private void CancelOpenLog()
+    {
+        if (selectedBrowser == null)
+        {
+            return;
+        }
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        var deleteDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x2E,                             // VK_DELETE (Delete key)
+            NativeKeyCode = 0x53,                              // Scan code for Delete
+            Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Delete
+        };
+        browserHost.SendKeyEvent(deleteDownEvent);
+
+        // Send the Delete keyup event
+        var deleteUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x2E,                             // VK_DELETE (Delete key)
+            NativeKeyCode = 0x53,                              // Scan code for Delete
+            Type = KeyEventType.KeyUp,                         // KeyUp event for Delete
+        };
+        browserHost.SendKeyEvent(deleteUpEvent);
+    }
+
+    private void CancelLog()
+    {
+        if (selectedBrowser == null)
+        {
+            return;
+        }
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        // Send the Ctrl (Left) keydown event
+        var ctrlDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
+            NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
+            Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Ctrl
+            Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is down
+        };
+        browserHost.SendKeyEvent(ctrlDownEvent);
+
+        // Send the Delete keydown event
+        var deleteDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x2E,                             // VK_DELETE (Delete key)
+            NativeKeyCode = 0x53,                              // Scan code for Delete
+            Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Delete
+            Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
+        };
+        browserHost.SendKeyEvent(deleteDownEvent);
+
+        // Send the Delete keyup event
+        var deleteUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x2E,                             // VK_DELETE (Delete key)
+            NativeKeyCode = 0x53,                              // Scan code for Delete
+            Type = KeyEventType.KeyUp,                         // KeyUp event for Delete
+            Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
+        };
+        browserHost.SendKeyEvent(deleteUpEvent);
+
+        // Send the Ctrl (Left) keyup event
+        var ctrlUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
+            NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
+            Type = KeyEventType.KeyUp,                         // KeyUp event for Ctrl
+            Modifiers = CefEventFlags.None                     // No modifiers as Ctrl is being released
+        };
+        browserHost.SendKeyEvent(ctrlUpEvent);
+    }
+
+    private void CloseLog()
+    {
+        if (selectedBrowser == null)
+        {
+            return;
+        }
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        var ctrlDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0xA2,
+            NativeKeyCode = 0x1D,
+            Type = KeyEventType.RawKeyDown,
+            Modifiers = CefEventFlags.ControlDown
+        };
+        browserHost.SendKeyEvent(ctrlDownEvent);
+
+        var enterDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x0D,
+            NativeKeyCode = 0x1C,
+            Type = KeyEventType.RawKeyDown,
+            Modifiers = CefEventFlags.ControlDown
+        };
+        browserHost.SendKeyEvent(enterDownEvent);
+
+        var enterUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x0D,
+            NativeKeyCode = 0x1C,
+            Type = KeyEventType.KeyUp,
+            Modifiers = CefEventFlags.ControlDown
+        };
+        browserHost.SendKeyEvent(enterUpEvent);
+
+        var ctrlUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0xA2,
+            NativeKeyCode = 0x1D,
+            Type = KeyEventType.KeyUp,
+            Modifiers = CefEventFlags.None
+        };
+        browserHost.SendKeyEvent(ctrlUpEvent);
+
+    }
+
+    private void NewLog()
+    {
+        ForwardKeyToCef(VirtualKeyCode.VK_A, ctrl: true);
+       //if (selectedBrowser == null)
+       // {
+       //     return;
+       // }
+
+       // var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+       // // Send the Ctrl (Left) keydown event
+       // var ctrlDownEvent = new KeyEvent
+       // {
+       //     WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
+       //     NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
+       //     Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Ctrl
+       //     Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is down
+       // };
+       // browserHost.SendKeyEvent(ctrlDownEvent);
+
+       // // Send the A keydown event
+       // var aDownEvent = new KeyEvent
+       // {
+       //     WindowsKeyCode = 0x41,                             // VK_A
+       //     NativeKeyCode = 0x1E,                              // Scan code for A
+       //     Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for A
+       //     Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
+       // };
+       // browserHost.SendKeyEvent(aDownEvent);
+
+       // // Send the A keyup event
+       // var aUpEvent = new KeyEvent
+       // {
+       //     WindowsKeyCode = 0x41,                             // VK_A
+       //     NativeKeyCode = 0x1E,                              // Scan code for A
+       //     Type = KeyEventType.KeyUp,                         // KeyUp event for A
+       //     Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
+       // };
+       // browserHost.SendKeyEvent(aUpEvent);
+
+       // // Send the Ctrl (Left) keyup event
+       // var ctrlUpEvent = new KeyEvent
+       // {
+       //     WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
+       //     NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
+       //     Type = KeyEventType.KeyUp,                         // KeyUp event for Ctrl
+       //     Modifiers = CefEventFlags.None                     // No modifiers as Ctrl is being released
+       // };
+       // browserHost.SendKeyEvent(ctrlUpEvent);
+    }
 
     private void PlayVideo()
     {
@@ -106,7 +391,7 @@ public class App
             WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
             NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
             Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Ctrl
-            Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is down
+            Modifiers = CefEventFlags.ControlDown              //rightHand.palm.Up Indicates the Ctrl key is down
         };
         browserHost.SendKeyEvent(ctrlDownEvent);
 
@@ -261,17 +546,17 @@ public class App
                 selectedBrowser.browser.GetBrowser(),
                 ctrl ? CefEventFlags.ControlDown : CefEventFlags.None,
                 KeyEventType.KeyDown,
-                keyCode,  
+                keyCode,
                 0
             );
 
-            if (charCode >= 32 && charCode <= 126) 
+            if (charCode >= 32 && charCode <= 126)
             {
                 selectedBrowser.SendKey(
                     selectedBrowser.browser.GetBrowser(),
                     ctrl ? CefEventFlags.ControlDown : CefEventFlags.None,
                     KeyEventType.Char,
-                    charCode,  
+                    charCode,
                     0
                 );
             }
@@ -280,7 +565,7 @@ public class App
                 selectedBrowser.browser.GetBrowser(),
                 ctrl ? CefEventFlags.ControlDown : CefEventFlags.None,
                 KeyEventType.KeyUp,
-                keyCode,                
+                keyCode,
                 0
             );
 
@@ -290,7 +575,7 @@ public class App
                     selectedBrowser.browser.GetBrowser(),
                     CefEventFlags.ControlDown,
                     KeyEventType.KeyUp,
-                    (int)VirtualKeyCode.VK_CONTROL,  
+                    (int)VirtualKeyCode.VK_CONTROL,
                     0
                 );
             }

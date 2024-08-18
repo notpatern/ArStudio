@@ -62,13 +62,15 @@ namespace TestWebAr.Scritps.Services
         public Action Play;
         public Action Pause;
         public Action CancelOpenLog;
+        public Action Tab;
+        public Action BackToLive;
+
         public Action ClearMarkers;
+        public Action CopyPlayerTimeCode;
         public Action CopyLog;
         public Action PasteLog;
-        public Action Tab;
         public Action ChangeLogTCING;
         public Action ChangeLogTCOUT;
-        public Action BackToLive;
 
         public HandTracking()
         {
@@ -176,16 +178,60 @@ namespace TestWebAr.Scritps.Services
                         Pause.Invoke();
                     }
 
-                    if (Vec3.Dot(rightHand.palm.Forward, leftHand.palm.Forward) <= -0.60 && !(leftHand.IsGripped && rightHand.IsGripped))
+                    if (Vec3.Dot(rightHand.palm.Forward.Normalized, leftHand.palm.Forward.Normalized) <= -0.60 && !(leftHand.IsGripped && rightHand.IsGripped))
                     {
                         Play.Invoke();
+                    }
+
+                    if (leftHand.IsPinched && rightHand.IsPinched)
+                    {
+                        CancelOpenLog.Invoke();
                     }
                 }
             }
 
+            if (Vec3.Dot(rightHand.palm.Forward.Normalized, leftHand.palm.Forward.Normalized) <= -0.60) {
+                if (rightHandVelocity.y >= 120) {
+                    BackToLive.Invoke();
+                }
+            }
+
+            if (Vec3.Dot(leftHand.palm.Forward, headForward) <= -0.60)
+            {
+                if (rightHandVelocity.x >= 120)
+                {
+                    if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
+                        NewLog.Invoke();
+                    }
+                }
+
+                if (rightHandVelocity.x <= -120)
+                {
+                    if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
+                        CloseLog.Invoke();
+                    }
+                }
+
+                if (rightHandVelocity.y >= 120)
+                {
+                    if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
+                        CancelLog.Invoke();
+                    }
+                }
+            }
+
+            if (leftHand.IsGripped) {
+                CopyPlayerTimeCode.Invoke();
+            }
+
+            if (leftHandVelocity.x >= 120 && leftHandAnglesDegree.x <= -30)
+            {
+                Tab.Invoke();
+            }
+
             if (rightHandVelocity.y <= -140 && rightHandAnglesDegree.y <= 15)
             {
-                //RightFastHand.Invoke(); 
+                //RightFastHand.Invoke();
             }
         }
     }

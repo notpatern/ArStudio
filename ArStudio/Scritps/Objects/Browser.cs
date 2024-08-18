@@ -7,7 +7,62 @@ using StereoKit;
 
 namespace TestWebAr.Scritps.Objects;
 
-public class Browser
+public class CustomLifeSpanHandler : ILifeSpanHandler
+{
+    public Tex Texture { get; internal set; }
+    Tex[] tex;
+    int texCurr = 0;
+    public Material material;
+
+    public bool OnBeforePopup(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame,
+                              string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition,
+                              bool userGesture, IPopupFeatures popupFeatures, IWindowInfo windowInfo,
+                              IBrowserSettings browserSettings, ref bool noJavascriptAccess,
+                              out IWebBrowser newBrowser)
+    {
+        var popupBrowser = new ChromiumWebBrowser(targetUrl);
+
+        Texture = Tex.White;
+        tex = new Tex[]
+        {
+            new Tex(TexType.ImageNomips, TexFormat.Bgra32),
+            new Tex(TexType.ImageNomips, TexFormat.Bgra32)
+        };
+        tex[0].AddressMode = TexAddress.Clamp;
+        tex[1].AddressMode = TexAddress.Clamp;
+        material = Material.Unlit.Copy();
+
+        popupBrowser.Paint += PopupBrowser_Paint;
+
+        newBrowser = popupBrowser;
+
+        return false;
+    }
+
+    private void PopupBrowser_Paint(object sender, OnPaintEventArgs e)
+    {
+        tex[texCurr].SetColors(e.Width, e.Height, e.BufferHandle);
+        Texture = tex[texCurr];
+        texCurr = (texCurr + 1) % 2;
+        Console.WriteLine("caca");
+    }
+
+    public void OnAfterCreated(IWebBrowser chromiumWebBrowser, IBrowser browser) { }
+
+    public bool DoClose(IWebBrowser chromiumWebBrowser, IBrowser browser) {
+        return false;
+    }
+
+    public void OnBeforeClose(IWebBrowser chromiumWebBrowser, IBrowser browser)
+    {
+        tex = null;
+        texCurr = 0;
+        Texture = null;
+        var offscreenBrowser = (ChromiumWebBrowser)chromiumWebBrowser;
+        offscreenBrowser.Paint -= PopupBrowser_Paint;
+    }
+}
+ class Browser
 {
     public Tex Texture { get; internal set; }
     public string Url
@@ -24,6 +79,8 @@ public class Browser
     Action<Browser> setSelectedBrowser;
 
     public ChromiumWebBrowser browser;
+    public ChromiumWebBrowser popupBrowser;
+
     Tex[] tex;
     int texCurr = 0;
     string url;
@@ -35,6 +92,8 @@ public class Browser
 
     Pose windowPosition;
     public string name;
+
+    CustomLifeSpanHandler _lifeSpanHandler = new CustomLifeSpanHandler();
 
     public Browser(string url, string name, Pose windowPosition)
     {
@@ -62,6 +121,7 @@ public class Browser
     async Task Init()
     {
         browser = new ChromiumWebBrowser(Url);
+        browser.LifeSpanHandler = _lifeSpanHandler;
         await browser.WaitForInitialLoadAsync();
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
@@ -193,6 +253,12 @@ public class Browser
         BtnState state = UI.VolumeAt("browser", bounds, UIConfirm.Push, out Handed hand);
 
         material[MatParamName.DiffuseTex] = Texture;
+
+        if (_lifeSpanHandler.Texture != null) {
+            material[MatParamName.DiffuseTex] = _lifeSpanHandler.Texture;
+            Console.WriteLine("je fais caca");
+        }
+
         Mesh.Quad.Draw(
             material,
             Matrix.TS(bounds.center + V.XYZ(0, 0, -0.015f), bounds.dimensions)
