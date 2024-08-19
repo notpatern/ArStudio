@@ -64,13 +64,15 @@ namespace TestWebAr.Scritps.Services
         public Action CancelOpenLog;
         public Action Tab;
         public Action BackToLive;
+        public Action CopyPlayerTimeCode;
 
         public Action ClearMarkers;
-        public Action CopyPlayerTimeCode;
         public Action CopyLog;
         public Action PasteLog;
         public Action ChangeLogTCING;
         public Action ChangeLogTCOUT;
+
+        private float inputBuffer; 
 
         public HandTracking()
         {
@@ -169,6 +171,10 @@ namespace TestWebAr.Scritps.Services
 
         private void UpdateHandTrackingChecks(object sender, ElapsedEventArgs e)
         {
+            inputBuffer -= (float)fixedDeltaTime;
+            if (inputBuffer > 0) {
+                return;
+            }
             if (Vec3.Distance(leftHand.palm.position, rightHand.palm.position) <= 0.07f)
             {
                 if (leftHandVelocity.x >= 100 && rightHandVelocity.x <= 100)
@@ -176,16 +182,19 @@ namespace TestWebAr.Scritps.Services
                     if (leftHand.IsGripped && rightHand.IsGripped)
                     {
                         Pause.Invoke();
+                        inputBuffer = 1;
                     }
 
                     if (Vec3.Dot(rightHand.palm.Forward.Normalized, leftHand.palm.Forward.Normalized) <= -0.60 && !(leftHand.IsGripped && rightHand.IsGripped))
                     {
                         Play.Invoke();
+                        inputBuffer = 1;
                     }
 
                     if (leftHand.IsPinched && rightHand.IsPinched)
                     {
                         CancelOpenLog.Invoke();
+                        inputBuffer = 1;
                     }
                 }
             }
@@ -193,6 +202,7 @@ namespace TestWebAr.Scritps.Services
             if (Vec3.Dot(rightHand.palm.Forward.Normalized, leftHand.palm.Forward.Normalized) <= -0.60) {
                 if (rightHandVelocity.y >= 120) {
                     BackToLive.Invoke();
+                    inputBuffer = 1;
                 }
             }
 
@@ -202,6 +212,7 @@ namespace TestWebAr.Scritps.Services
                 {
                     if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
                         NewLog.Invoke();
+                        inputBuffer = 1;
                     }
                 }
 
@@ -209,6 +220,7 @@ namespace TestWebAr.Scritps.Services
                 {
                     if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
                         CloseLog.Invoke();
+                        inputBuffer = 1;
                     }
                 }
 
@@ -216,22 +228,26 @@ namespace TestWebAr.Scritps.Services
                 {
                     if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
                         CancelLog.Invoke();
+                        inputBuffer = 1;
                     }
                 }
             }
 
             if (leftHand.IsGripped) {
                 CopyPlayerTimeCode.Invoke();
+                inputBuffer = 1;
             }
 
             if (leftHandVelocity.x >= 120 && leftHandAnglesDegree.x <= -30)
             {
                 Tab.Invoke();
+                inputBuffer = 1;
             }
 
             if (rightHandVelocity.y <= -140 && rightHandAnglesDegree.y <= 15)
             {
-                //RightFastHand.Invoke();
+                RightFastHand.Invoke();
+                inputBuffer = 1;
             }
         }
     }

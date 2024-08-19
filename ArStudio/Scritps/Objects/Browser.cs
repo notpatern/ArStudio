@@ -6,7 +6,6 @@ using CefSharp.OffScreen;
 using StereoKit;
 
 namespace TestWebAr.Scritps.Objects;
-
 public class CustomLifeSpanHandler : ILifeSpanHandler
 {
     public Tex Texture { get; internal set; }
@@ -28,6 +27,7 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
             new Tex(TexType.ImageNomips, TexFormat.Bgra32),
             new Tex(TexType.ImageNomips, TexFormat.Bgra32)
         };
+        
         tex[0].AddressMode = TexAddress.Clamp;
         tex[1].AddressMode = TexAddress.Clamp;
         material = Material.Unlit.Copy();
@@ -35,6 +35,8 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
         popupBrowser.Paint += PopupBrowser_Paint;
 
         newBrowser = popupBrowser;
+
+        Console.WriteLine("popup handled");
 
         return false;
     }
@@ -44,7 +46,7 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
         tex[texCurr].SetColors(e.Width, e.Height, e.BufferHandle);
         Texture = tex[texCurr];
         texCurr = (texCurr + 1) % 2;
-        Console.WriteLine("caca");
+        Console.WriteLine("popup painted");
     }
 
     public void OnAfterCreated(IWebBrowser chromiumWebBrowser, IBrowser browser) { }
@@ -60,6 +62,7 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
         Texture = null;
         var offscreenBrowser = (ChromiumWebBrowser)chromiumWebBrowser;
         offscreenBrowser.Paint -= PopupBrowser_Paint;
+        Console.WriteLine("popup closed");
     }
 }
  class Browser
@@ -79,7 +82,7 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
     Action<Browser> setSelectedBrowser;
 
     public ChromiumWebBrowser browser;
-    public ChromiumWebBrowser popupBrowser;
+    private CefOffScreenDropdownHandler dropDownHandler;
 
     Tex[] tex;
     int texCurr = 0;
@@ -121,6 +124,7 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
     async Task Init()
     {
         browser = new ChromiumWebBrowser(Url);
+        dropDownHandler = new CefOffScreenDropdownHandler(browser);
         browser.LifeSpanHandler = _lifeSpanHandler;
         await browser.WaitForInitialLoadAsync();
         browser.Paint += Browser_Paint;
@@ -242,7 +246,36 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
         }
         StepAsUI();
         UI.WindowEnd();
+
+        if (dropDownHandler != null && dropDownHandler.IsDropdownOpened()) {
+            // add custom drop down to manually select
+            UI.WindowBegin("Dropdown Menu", );
+
+            UI.WindowEnd();
+        }
     }
+
+    private async Task SelectDropdownOption(IFrame frame, string selectId, string optionValue) {
+        string script = $@"
+        (function() {{
+            function selectOption(selectId, optionValue) {{
+                var selectElement = document.getElementById(selectId);
+                if (selectElement) {{
+                    selectElement.value = optionValue;
+                    var event = new Event('change', {{ bubbles: true }});
+                    selectElement.dispatchEvent(event);
+                }} else {{
+                    console.error('Select element with ID ' + selectId + ' not found.');
+                }}
+            }}
+
+            selectOption('{selectId}', '{optionValue}');
+        }})();
+        ";
+
+        frame.ExecuteJavaScriptAsync(script);
+    } // form-control ng-pristine ng-valid ng-touched
+
 
     private void StepAsUI()
     {
@@ -256,7 +289,6 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
 
         if (_lifeSpanHandler.Texture != null) {
             material[MatParamName.DiffuseTex] = _lifeSpanHandler.Texture;
-            Console.WriteLine("je fais caca");
         }
 
         Mesh.Quad.Draw(

@@ -46,7 +46,7 @@ public class App
             browserList.Add(
                 new Browser(
                     //"https://javascript.info/keyboard-events",
-                    "http://192.168.101.52:23800/login",
+                    "https://skylog-demo.broadteam.eu/login",
 
                     i.ToString(),
                     new Pose(0.75f * i, 0, -0.5f, Quat.LookDir(0, 0, 1))
@@ -96,11 +96,11 @@ public class App
 
     private void LogInRadioEdit()
     {
-        ForwardKeyToCef(VirtualKeyCode.VK_T);
-        ForwardKeyToCef(VirtualKeyCode.VK_E);
-        ForwardKeyToCef(VirtualKeyCode.VK_S);
-        ForwardKeyToCef(VirtualKeyCode.VK_T);
-        ForwardKeyToCef(VirtualKeyCode.TAB);
+        ForwardKeyToCef(VirtualKeyCode.VK_D, lowerCase: true);
+        ForwardKeyToCef(VirtualKeyCode.VK_E, lowerCase: true);
+        ForwardKeyToCef(VirtualKeyCode.VK_M, lowerCase: true);
+        ForwardKeyToCef(VirtualKeyCode.VK_O, lowerCase: true);
+        ForwardKeyToCef(VirtualKeyCode.TAB, lowerCase: true);
     }
     
     private void CopyPlayerTimeCode()
