@@ -63,13 +63,12 @@ namespace TestWebAr.Scritps.Objects;
     async Task Init()
     {
         browser = new ChromiumWebBrowser(Url);
-        dropDownHandler = new CefOffScreenDropdownHandler(browser);
         await browser.WaitForInitialLoadAsync();
+        dropDownHandler = new CefOffScreenDropdownHandler(browser);
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
         Mute();
         InitializeSetVolumerJsFunction();
-        browser.ShowDevTools();
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)
