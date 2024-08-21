@@ -6,65 +6,6 @@ using CefSharp.OffScreen;
 using StereoKit;
 
 namespace TestWebAr.Scritps.Objects;
-public class CustomLifeSpanHandler : ILifeSpanHandler
-{
-    public Tex Texture { get; internal set; }
-    Tex[] tex;
-    int texCurr = 0;
-    public Material material;
-
-    public bool OnBeforePopup(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame,
-                              string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition,
-                              bool userGesture, IPopupFeatures popupFeatures, IWindowInfo windowInfo,
-                              IBrowserSettings browserSettings, ref bool noJavascriptAccess,
-                              out IWebBrowser newBrowser)
-    {
-        var popupBrowser = new ChromiumWebBrowser(targetUrl);
-
-        Texture = Tex.White;
-        tex = new Tex[]
-        {
-            new Tex(TexType.ImageNomips, TexFormat.Bgra32),
-            new Tex(TexType.ImageNomips, TexFormat.Bgra32)
-        };
-        
-        tex[0].AddressMode = TexAddress.Clamp;
-        tex[1].AddressMode = TexAddress.Clamp;
-        material = Material.Unlit.Copy();
-
-        popupBrowser.Paint += PopupBrowser_Paint;
-
-        newBrowser = popupBrowser;
-
-        Console.WriteLine("popup handled");
-
-        return false;
-    }
-
-    private void PopupBrowser_Paint(object sender, OnPaintEventArgs e)
-    {
-        tex[texCurr].SetColors(e.Width, e.Height, e.BufferHandle);
-        Texture = tex[texCurr];
-        texCurr = (texCurr + 1) % 2;
-        Console.WriteLine("popup painted");
-    }
-
-    public void OnAfterCreated(IWebBrowser chromiumWebBrowser, IBrowser browser) { }
-
-    public bool DoClose(IWebBrowser chromiumWebBrowser, IBrowser browser) {
-        return false;
-    }
-
-    public void OnBeforeClose(IWebBrowser chromiumWebBrowser, IBrowser browser)
-    {
-        tex = null;
-        texCurr = 0;
-        Texture = null;
-        var offscreenBrowser = (ChromiumWebBrowser)chromiumWebBrowser;
-        offscreenBrowser.Paint -= PopupBrowser_Paint;
-        Console.WriteLine("popup closed");
-    }
-}
  class Browser
 {
     public Tex Texture { get; internal set; }
@@ -96,8 +37,6 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
     Pose windowPosition;
     public string name;
 
-    CustomLifeSpanHandler _lifeSpanHandler = new CustomLifeSpanHandler();
-
     public Browser(string url, string name, Pose windowPosition)
     {
         this.name = name;
@@ -125,7 +64,6 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
     {
         browser = new ChromiumWebBrowser(Url);
         dropDownHandler = new CefOffScreenDropdownHandler(browser);
-        browser.LifeSpanHandler = _lifeSpanHandler;
         await browser.WaitForInitialLoadAsync();
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
@@ -249,8 +187,14 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
 
         if (dropDownHandler != null && dropDownHandler.IsDropdownOpened()) {
             // add custom drop down to manually select
-            UI.WindowBegin("Dropdown Menu", );
-
+            Pose buttonsPose = new Pose(windowPosition.position.x, windowPosition.position.y, windowPosition.position.z + 0.05f);
+            UI.WindowBegin("Dropdown Menu", ref buttonsPose);
+            if (UI.Button("Foot")) {
+                SelectDropdownOption(browser.GetMainFrame(), "form-control ng-pristine ng-valid, ng-touched", "1");
+            }
+            if (UI.Button("Truc")) {
+                SelectDropdownOption(browser.GetMainFrame(), "form-control ng-pristine ng-valid, ng-touched", "2");
+            }
             UI.WindowEnd();
         }
     }
@@ -286,10 +230,6 @@ public class CustomLifeSpanHandler : ILifeSpanHandler
         BtnState state = UI.VolumeAt("browser", bounds, UIConfirm.Push, out Handed hand);
 
         material[MatParamName.DiffuseTex] = Texture;
-
-        if (_lifeSpanHandler.Texture != null) {
-            material[MatParamName.DiffuseTex] = _lifeSpanHandler.Texture;
-        }
 
         Mesh.Quad.Draw(
             material,

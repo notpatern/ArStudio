@@ -66,13 +66,13 @@ namespace TestWebAr.Scritps.Services
         public Action BackToLive;
         public Action CopyPlayerTimeCode;
 
-        public Action ClearMarkers;
-        public Action CopyLog;
-        public Action PasteLog;
-        public Action ChangeLogTCING;
-        public Action ChangeLogTCOUT;
+        /*public Action ClearMarkers;*/
+        /*public Action CopyLog;*/
+        /*public Action PasteLog;*/
+        /*public Action ChangeLogTCING;*/
+        /*public Action ChangeLogTCOUT;*/
 
-        private float inputBuffer; 
+        private float inputBuffer;
 
         public HandTracking()
         {

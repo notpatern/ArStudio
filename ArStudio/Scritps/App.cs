@@ -40,40 +40,51 @@ public class App
         passthroughStepper.EnabledPassthrough = true;
 
         volumeSlider = new VolumeSlider("Volume", new Pose(0, 0, -0.3f, Quat.LookDir(0, 0, 1)));
-
-        for (int i = 0; i < 1; i++)
+        int index = 0;
+        for (int i = 0; i < 2; i++)
         {
-            browserList.Add(
-                new Browser(
-                    //"https://javascript.info/keyboard-events",
-                    "https://skylog-demo.broadteam.eu/login",
-
-                    i.ToString(),
-                    new Pose(0.75f * i, 0, -0.5f, Quat.LookDir(0, 0, 1))
-                )
-            );
-            while (browserList[i].browser == null) { }
-            while (!browserList[i].browser.IsBrowserInitialized) { }
-
-            browserList[i].BindBrowserSelect((browser) =>
+            for (int j = -1; j < 1; j++)
             {
-                selectedBrowser = browser;
-                browser.selected = true;
-                if (dirtyBrowser != null && dirtyBrowser != selectedBrowser)
-                {
-                    dirtyBrowser.Mute();
-                    dirtyBrowser.selected = false;
-                }
-                dirtyBrowser = browser;
-            });
-            volumeSlider.BindVolumeAction(browserList[i].SetVolume);
-        }
+                browserList.Add(
+                        new Browser(
+                            //"https://javascript.info/keyboard-events",
+                            "https://skylog-demo.broadteam.eu/login",
 
-        floorMaterial = new Material("floor.hlsl");
-        floorMaterial.Transparency = Transparency.Blend;
+                            i + j.ToString(),
+                            new Pose((float)(0.65 * j), i, -0.5f, Quat.LookDir(Input.Head.position))
+                            )
+                        );
+
+                Console.WriteLine("caca");
+                while (browserList[index].browser == null) { }
+
+                Console.WriteLine("caca2");
+                while (!browserList[index].browser.IsBrowserInitialized) { }
+
+                Console.WriteLine("passed");
+
+                browserList[index].BindBrowserSelect((browser) =>
+                        {
+                        selectedBrowser = browser;
+                        browser.selected = true;
+                        if (dirtyBrowser != null && dirtyBrowser != selectedBrowser)
+                        {
+                            dirtyBrowser.Mute();
+                            dirtyBrowser.selected = false;
+                        }
+                        dirtyBrowser = browser;
+                        });
+                volumeSlider.BindVolumeAction(browserList[index].SetVolume);
+                index++;
+            }
+        }
 
         buttonWindow = new ButtonWindow("buttons", new Pose(0.4f, 0, -0.3f, Quat.LookDir(0, 0, 1)));
 
+        BindEvents();
+    }
+
+    private void BindEvents() {
         handTracking.Pause += PauseVideo;
         handTracking.Play += PlayVideo;
         handTracking.NewLog += NewLog;
@@ -102,7 +113,7 @@ public class App
         ForwardKeyToCef(VirtualKeyCode.VK_O, lowerCase: true);
         ForwardKeyToCef(VirtualKeyCode.TAB, lowerCase: true);
     }
-    
+
     private void CopyPlayerTimeCode()
     {
         if (selectedBrowser == null)
