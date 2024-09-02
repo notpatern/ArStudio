@@ -22,6 +22,12 @@ public class App
 
     VolumeSlider volumeSlider;
 
+    Pose browserSelectPosition = new Pose(new Vec3(0, 0, 0.02f), Quat.LookDir(0, 0, 1));
+
+    KeyForwarder keyForwarder = new KeyForwarder();
+
+    int browserAmount;
+
     public void Init()
     {
         SKSettings settings = new SKSettings
@@ -40,48 +46,68 @@ public class App
         passthroughStepper.EnabledPassthrough = true;
 
         volumeSlider = new VolumeSlider("Volume", new Pose(0, 0, -0.3f, Quat.LookDir(0, 0, 1)));
-        int index = 0;
+        browserAmount = 0;
         for (int i = 0; i < 2; i++)
         {
-            for (int j = -1; j < 1; j++)
-            {
+            for (int j = -1; j < 2; j++) {
+                if (j == 0 && i == 1) {
+                    continue;
+                }
+
+                Quat lookDirection = Quat.LookDir(0, 0, 1);
+
+                Vec3 windowPosition = new Vec3(0.65f * j, (float)(0.36 * -i), -0.5f);
+
+                Vec2 scale = new Vec2(0.5f, 0.5f);
+
+                if (j == 0) {
+                    windowPosition.y = -0.1f;
+                    scale = new Vec2(0.8f, 0.8f);
+                }
+
+                if (j != 0) {
+                    Vec3 directionVector = Input.Head.position - windowPosition;
+                    directionVector.y = 0;
+                    directionVector = directionVector.Normalized;
+                    lookDirection = Quat.LookAt(Vec3.Forward, directionVector);
+
+                    windowPosition.z = windowPosition.z + 0.1f;
+                }
+
                 browserList.Add(
                         new Browser(
-                            //"https://javascript.info/keyboard-events",
                             "https://skylog-demo.broadteam.eu/login",
-
-                            i + j.ToString(),
-                            new Pose((float)(0.65 * j), i, -0.5f, Quat.LookDir(Input.Head.position))
+                            browserAmount.ToString(),
+                            new Pose(windowPosition, lookDirection),
+                            scale.x,
+                            scale.y
                             )
                         );
 
-                Console.WriteLine("caca");
-                while (browserList[index].browser == null) { }
+                while (browserList[browserAmount].browser == null) { }
+                while (!browserList[browserAmount].browser.IsBrowserInitialized) { }
 
-                Console.WriteLine("caca2");
-                while (!browserList[index].browser.IsBrowserInitialized) { }
+                browserList[browserAmount].BindBrowserSelect(SelectBrowser);
 
-                Console.WriteLine("passed");
-
-                browserList[index].BindBrowserSelect((browser) =>
-                        {
-                        selectedBrowser = browser;
-                        browser.selected = true;
-                        if (dirtyBrowser != null && dirtyBrowser != selectedBrowser)
-                        {
-                            dirtyBrowser.Mute();
-                            dirtyBrowser.selected = false;
-                        }
-                        dirtyBrowser = browser;
-                        });
-                volumeSlider.BindVolumeAction(browserList[index].SetVolume);
-                index++;
+                volumeSlider.BindVolumeAction(browserList[browserAmount].SetVolume);
+                browserAmount++;
             }
         }
 
         buttonWindow = new ButtonWindow("buttons", new Pose(0.4f, 0, -0.3f, Quat.LookDir(0, 0, 1)));
 
         BindEvents();
+    }
+
+    private void SelectBrowser(Browser browser) {
+        selectedBrowser = browser;
+        browser.selected = true;
+        if (dirtyBrowser != null && dirtyBrowser != selectedBrowser)
+        {
+            dirtyBrowser.Mute();
+            dirtyBrowser.selected = false;
+        }
+        dirtyBrowser = browser;
     }
 
     private void BindEvents() {
@@ -95,6 +121,7 @@ public class App
         handTracking.Tab += Tab;
         handTracking.BackToLive += BackToLive;
         handTracking.RightFastHand += LogInRadioEdit;
+        handTracking.ClearMarkers += ClearMarkers;
     }
 
     private void UpdateBrowsers()
@@ -107,11 +134,15 @@ public class App
 
     private void LogInRadioEdit()
     {
-        ForwardKeyToCef(VirtualKeyCode.VK_D, lowerCase: true);
-        ForwardKeyToCef(VirtualKeyCode.VK_E, lowerCase: true);
-        ForwardKeyToCef(VirtualKeyCode.VK_M, lowerCase: true);
-        ForwardKeyToCef(VirtualKeyCode.VK_O, lowerCase: true);
-        ForwardKeyToCef(VirtualKeyCode.TAB, lowerCase: true);
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_D, lowerCase: true);
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_E, lowerCase: true);
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_M, lowerCase: true);
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_O, lowerCase: true);
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.TAB, lowerCase: true);
+    }
+
+    private void ClearMarkers() {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_R, ctrl: true);
     }
 
     private void CopyPlayerTimeCode()
@@ -343,53 +374,7 @@ public class App
 
     private void NewLog()
     {
-        ForwardKeyToCef(VirtualKeyCode.VK_A, ctrl: true);
-       //if (selectedBrowser == null)
-       // {
-       //     return;
-       // }
-
-       // var browserHost = selectedBrowser.browser.GetBrowserHost();
-
-       // // Send the Ctrl (Left) keydown event
-       // var ctrlDownEvent = new KeyEvent
-       // {
-       //     WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
-       //     NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
-       //     Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Ctrl
-       //     Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is down
-       // };
-       // browserHost.SendKeyEvent(ctrlDownEvent);
-
-       // // Send the A keydown event
-       // var aDownEvent = new KeyEvent
-       // {
-       //     WindowsKeyCode = 0x41,                             // VK_A
-       //     NativeKeyCode = 0x1E,                              // Scan code for A
-       //     Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for A
-       //     Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
-       // };
-       // browserHost.SendKeyEvent(aDownEvent);
-
-       // // Send the A keyup event
-       // var aUpEvent = new KeyEvent
-       // {
-       //     WindowsKeyCode = 0x41,                             // VK_A
-       //     NativeKeyCode = 0x1E,                              // Scan code for A
-       //     Type = KeyEventType.KeyUp,                         // KeyUp event for A
-       //     Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
-       // };
-       // browserHost.SendKeyEvent(aUpEvent);
-
-       // // Send the Ctrl (Left) keyup event
-       // var ctrlUpEvent = new KeyEvent
-       // {
-       //     WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
-       //     NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
-       //     Type = KeyEventType.KeyUp,                         // KeyUp event for Ctrl
-       //     Modifiers = CefEventFlags.None                     // No modifiers as Ctrl is being released
-       // };
-       // browserHost.SendKeyEvent(ctrlUpEvent);
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_A, ctrl: true);
     }
 
     private void PlayVideo()
@@ -440,7 +425,17 @@ public class App
 
     void PauseVideo()
     {
-        ForwardKeyToCef(VirtualKeyCode.VK_P, ctrl: true);
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_P, ctrl: true);
+    }
+
+    void BrowserSelectPanel() {
+        UI.WindowBegin("Select Browser", ref browserSelectPosition);
+        for (int i = 0; i < 5; i++) {
+            if (UI.Button("Screen " + (i + 1))) {
+                SelectBrowser(browserList[i]);
+            }
+        }
+        UI.WindowEnd();
     }
 
     public void Update()
@@ -449,6 +444,7 @@ public class App
         volumeSlider.UpdateSlider();
         UpdateBrowsers();
         buttonWindow.UpdateWindow();
+        BrowserSelectPanel();
     }
 
     // ------------------------------------------------------------------------------------------------------------
@@ -456,78 +452,81 @@ public class App
     private void CaptureKeyboardInput()
     {
         // Add more keys as needed
-        CheckAndForwardKey(Key.A, VirtualKeyCode.VK_A);
-        CheckAndForwardKey(Key.B, VirtualKeyCode.VK_B);
-        CheckAndForwardKey(Key.C, VirtualKeyCode.VK_C);
-        CheckAndForwardKey(Key.D, VirtualKeyCode.VK_D);
-        CheckAndForwardKey(Key.E, VirtualKeyCode.VK_E);
-        CheckAndForwardKey(Key.F, VirtualKeyCode.VK_F);
-        CheckAndForwardKey(Key.G, VirtualKeyCode.VK_G);
-        CheckAndForwardKey(Key.H, VirtualKeyCode.VK_H);
-        CheckAndForwardKey(Key.I, VirtualKeyCode.VK_I);
-        CheckAndForwardKey(Key.J, VirtualKeyCode.VK_J);
-        CheckAndForwardKey(Key.K, VirtualKeyCode.VK_K);
-        CheckAndForwardKey(Key.L, VirtualKeyCode.VK_L);
-        CheckAndForwardKey(Key.M, VirtualKeyCode.VK_M);
-        CheckAndForwardKey(Key.N, VirtualKeyCode.VK_N);
-        CheckAndForwardKey(Key.O, VirtualKeyCode.VK_O);
-        CheckAndForwardKey(Key.P, VirtualKeyCode.VK_P);
-        CheckAndForwardKey(Key.Q, VirtualKeyCode.VK_Q);
-        CheckAndForwardKey(Key.R, VirtualKeyCode.VK_R);
-        CheckAndForwardKey(Key.S, VirtualKeyCode.VK_S);
-        CheckAndForwardKey(Key.T, VirtualKeyCode.VK_T);
-        CheckAndForwardKey(Key.U, VirtualKeyCode.VK_U);
-        CheckAndForwardKey(Key.V, VirtualKeyCode.VK_V);
-        CheckAndForwardKey(Key.W, VirtualKeyCode.VK_W);
-        CheckAndForwardKey(Key.X, VirtualKeyCode.VK_X);
-        CheckAndForwardKey(Key.Y, VirtualKeyCode.VK_Y);
-        CheckAndForwardKey(Key.Z, VirtualKeyCode.VK_Z);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.A, VirtualKeyCode.VK_A);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.B, VirtualKeyCode.VK_B);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.C, VirtualKeyCode.VK_C);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.D, VirtualKeyCode.VK_D);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.E, VirtualKeyCode.VK_E);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F, VirtualKeyCode.VK_F);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.G, VirtualKeyCode.VK_G);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.H, VirtualKeyCode.VK_H);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.I, VirtualKeyCode.VK_I);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.J, VirtualKeyCode.VK_J);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.K, VirtualKeyCode.VK_K);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.L, VirtualKeyCode.VK_L);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.M, VirtualKeyCode.VK_M);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N, VirtualKeyCode.VK_N);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.O, VirtualKeyCode.VK_O);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.P, VirtualKeyCode.VK_P);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Q, VirtualKeyCode.VK_Q);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.R, VirtualKeyCode.VK_R);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.S, VirtualKeyCode.VK_S);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.T, VirtualKeyCode.VK_T);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.U, VirtualKeyCode.VK_U);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.V, VirtualKeyCode.VK_V);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.W, VirtualKeyCode.VK_W);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.X, VirtualKeyCode.VK_X);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Y, VirtualKeyCode.VK_Y);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Z, VirtualKeyCode.VK_Z);
 
-        CheckAndForwardKey(Key.N0, VirtualKeyCode.VK_0);
-        CheckAndForwardKey(Key.N1, VirtualKeyCode.VK_1);
-        CheckAndForwardKey(Key.N2, VirtualKeyCode.VK_2);
-        CheckAndForwardKey(Key.N3, VirtualKeyCode.VK_3);
-        CheckAndForwardKey(Key.N4, VirtualKeyCode.VK_4);
-        CheckAndForwardKey(Key.N5, VirtualKeyCode.VK_5);
-        CheckAndForwardKey(Key.N6, VirtualKeyCode.VK_6);
-        CheckAndForwardKey(Key.N7, VirtualKeyCode.VK_7);
-        CheckAndForwardKey(Key.N8, VirtualKeyCode.VK_8);
-        CheckAndForwardKey(Key.N9, VirtualKeyCode.VK_9);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N0, VirtualKeyCode.VK_0);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N1, VirtualKeyCode.VK_1);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N2, VirtualKeyCode.VK_2);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N3, VirtualKeyCode.VK_3);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N4, VirtualKeyCode.VK_4);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N5, VirtualKeyCode.VK_5);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N6, VirtualKeyCode.VK_6);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N7, VirtualKeyCode.VK_7);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N8, VirtualKeyCode.VK_8);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.N9, VirtualKeyCode.VK_9);
 
-        CheckAndForwardKey(Key.Space, VirtualKeyCode.VK_SPACE);
-        CheckAndForwardKey(Key.Return, VirtualKeyCode.RETURN);
-        CheckAndForwardKey(Key.Backspace, VirtualKeyCode.BACK);
-        CheckAndForwardKey(Key.Tab, VirtualKeyCode.TAB);
-        CheckAndForwardKey(Key.Esc, VirtualKeyCode.ESCAPE);
-        CheckAndForwardKey(Key.Left, VirtualKeyCode.LEFT);
-        CheckAndForwardKey(Key.Right, VirtualKeyCode.RIGHT);
-        CheckAndForwardKey(Key.Up, VirtualKeyCode.UP);
-        CheckAndForwardKey(Key.Down, VirtualKeyCode.DOWN);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Space, VirtualKeyCode.VK_SPACE);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Return, VirtualKeyCode.RETURN);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Backspace, VirtualKeyCode.BACK);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Tab, VirtualKeyCode.TAB);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Esc, VirtualKeyCode.ESCAPE);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Left, VirtualKeyCode.LEFT);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Right, VirtualKeyCode.RIGHT);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Up, VirtualKeyCode.UP);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.Down, VirtualKeyCode.DOWN);
 
         // Add function keys
-        CheckAndForwardKey(Key.F1, VirtualKeyCode.F1);
-        CheckAndForwardKey(Key.F2, VirtualKeyCode.F2);
-        CheckAndForwardKey(Key.F3, VirtualKeyCode.F3);
-        CheckAndForwardKey(Key.F4, VirtualKeyCode.F4);
-        CheckAndForwardKey(Key.F5, VirtualKeyCode.F5);
-        CheckAndForwardKey(Key.F6, VirtualKeyCode.F6);
-        CheckAndForwardKey(Key.F7, VirtualKeyCode.F7);
-        CheckAndForwardKey(Key.F8, VirtualKeyCode.F8);
-        CheckAndForwardKey(Key.F9, VirtualKeyCode.F9);
-        CheckAndForwardKey(Key.F10, VirtualKeyCode.F10);
-        CheckAndForwardKey(Key.F11, VirtualKeyCode.F11);
-        CheckAndForwardKey(Key.F12, VirtualKeyCode.F12);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F1, VirtualKeyCode.F1);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F2, VirtualKeyCode.F2);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F3, VirtualKeyCode.F3);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F4, VirtualKeyCode.F4);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F5, VirtualKeyCode.F5);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F6, VirtualKeyCode.F6);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F7, VirtualKeyCode.F7);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F8, VirtualKeyCode.F8);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F9, VirtualKeyCode.F9);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F10, VirtualKeyCode.F10);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F11, VirtualKeyCode.F11);
+        keyForwarder.CheckAndForwardKey(selectedBrowser, Key.F12, VirtualKeyCode.F12);
     }
+}
 
-    private void CheckAndForwardKey(Key skKey, VirtualKeyCode vkCode)
+public class KeyForwarder {
+
+    public void CheckAndForwardKey(Browser selectedBrowser, Key skKey, VirtualKeyCode vkCode)
     {
         if (Input.Key(skKey).IsJustActive())
         {
-            ForwardKeyToCef(vkCode);
+            ForwardKeyToCef(selectedBrowser, vkCode);
         }
     }
 
-    private void ForwardKeyToCef(VirtualKeyCode key, bool ctrl = false, bool lowerCase = false)
+    public void ForwardKeyToCef(Browser selectedBrowser, VirtualKeyCode key, bool ctrl = false, bool lowerCase = false)
     {
         if (selectedBrowser != null)
         {

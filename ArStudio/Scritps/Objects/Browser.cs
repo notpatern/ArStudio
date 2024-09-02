@@ -6,7 +6,7 @@ using CefSharp.OffScreen;
 using StereoKit;
 
 namespace TestWebAr.Scritps.Objects;
- class Browser
+public class Browser
 {
     public Tex Texture { get; internal set; }
     public string Url
@@ -29,6 +29,8 @@ namespace TestWebAr.Scritps.Objects;
     int texCurr = 0;
     string url;
 
+    Vec2 browserScale;
+
     public bool selected = false;
 
     public float browserAspect = 9.0f / 16.0f;
@@ -37,10 +39,12 @@ namespace TestWebAr.Scritps.Objects;
     Pose windowPosition;
     public string name;
 
-    public Browser(string url, string name, Pose windowPosition)
+    public Browser(string url, string name, Pose windowPosition, float xScale = 0.5f, float yScale = 0.5f)
     {
         this.name = name;
         this.windowPosition = windowPosition;
+
+        browserScale = new Vec2(xScale, yScale);
 
         Texture = Tex.White;
         Url = url;
@@ -49,6 +53,7 @@ namespace TestWebAr.Scritps.Objects;
             new Tex(TexType.ImageNomips, TexFormat.Bgra32),
             new Tex(TexType.ImageNomips, TexFormat.Bgra32)
         };
+
         tex[0].AddressMode = TexAddress.Clamp;
         tex[1].AddressMode = TexAddress.Clamp;
         material = Material.Unlit.Copy();
@@ -144,7 +149,6 @@ namespace TestWebAr.Scritps.Objects;
 
     public TouchPoint TouchPoint(Bounds bounds, Handed hand)
     {
-
         Hand h = Input.Hand(hand);
         HandJoint j = h[FingerId.Index, JointId.Tip];
         Plane p = new Plane(
@@ -172,7 +176,9 @@ namespace TestWebAr.Scritps.Objects;
 
     public void UpdateBrowser()
     {
-        UI.WindowBegin(name, ref windowPosition, V.XY(0.6f, 0), UIWin.Body, UIMove.FaceUser);
+        Vec2 windowSize = new Vec2(browserScale.x + 0.02f, (browserScale.y + 0.033f) * browserAspect);
+
+        UI.WindowBegin(name, ref windowPosition, windowSize, UIWin.Body, UIMove.None);
         if (selected)
         {
             UI.SetThemeColor(UIColor.Background, Color.White);
@@ -223,17 +229,18 @@ namespace TestWebAr.Scritps.Objects;
     private void StepAsUI()
     {
         float width = UI.LayoutRemaining.x;
-        Bounds bounds = UI.LayoutReserve(new Vec2(width, browserAspect * width));
+        Bounds bounds = UI.LayoutReserve(new Vec2(browserScale.x, browserScale.y * browserAspect));
         bounds.center.z += 0.01f;
         bounds.dimensions.z += 0.03f;
         BtnState state = UI.VolumeAt("browser", bounds, UIConfirm.Push, out Handed hand);
 
         material[MatParamName.DiffuseTex] = Texture;
 
-        Mesh.Quad.Draw(
-            material,
-            Matrix.TS(bounds.center + V.XYZ(0, 0, -0.015f), bounds.dimensions)
-        );
+        Matrix transform = Matrix.TRS(bounds.center + V.XYZ(0, 0, -0.015f),
+                Quat.Identity,
+                bounds.dimensions);
+
+        Mesh.Quad.Draw(material, transform);
 
         if (browser == null || !browser.IsBrowserInitialized)
             return;
