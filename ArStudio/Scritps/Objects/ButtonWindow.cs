@@ -49,7 +49,6 @@ namespace TestWebAr.Scritps.Objects
             }
 
             if (UI.Button("Paste Time Code")) {
-                SkyLogEvents.PastePlayerTimeCode.Invoke();
             }
             UI.SameLine();
             if (UI.Button("Change log TCIN")) {

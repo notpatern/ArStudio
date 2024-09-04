@@ -20,8 +20,6 @@ public static class SkyLogEvents
     public static Action BackToLive;
     public static Action CopyPlayerTimeCode;
     public static Action ClearMarkers;
-
-    public static Action PastePlayerTimeCode;
     public static Action CopyLog;
     public static Action PasteLog;
     public static Action ChangeLogTCIN;
@@ -29,16 +27,36 @@ public static class SkyLogEvents
 
     public static void BindEvents()
     {
-        SkyLogEvents.Pause += PauseVideoMethod;
-        SkyLogEvents.Play += PlayVideoMethod;
-        SkyLogEvents.NewLog += NewLogMethod;
-        SkyLogEvents.CloseLog += CloseLogMethod;
-        SkyLogEvents.CancelLog += CancelLogMethod;
-        SkyLogEvents.CancelOpenLog += CancelOpenLogMethod;
-        SkyLogEvents.CopyPlayerTimeCode += CopyPlayerTimeCodeMethod;
-        SkyLogEvents.Tab += TabMethod;
-        SkyLogEvents.BackToLive += BackToLiveMethod;
-        SkyLogEvents.ClearMarkers += ClearMarkersMethod;
+        Pause += PauseVideoMethod;
+        Play += PlayVideoMethod;
+        NewLog += NewLogMethod;
+        CloseLog += CloseLogMethod;
+        CancelLog += CancelLogMethod;
+        CancelOpenLog += CancelOpenLogMethod;
+        CopyPlayerTimeCode += CopyPlayerTimeCodeMethod;
+        Tab += TabMethod;
+        BackToLive += BackToLiveMethod;
+        ClearMarkers += ClearMarkersMethod;
+        CopyLog += CopyLogMethod;
+        PasteLog += PasteLogMethod;
+        ChangeLogTCIN += ChangeLogTCINMethod;
+        ChangeLogTCOUT += ChangeLogTCINMethod;
+    }
+
+    private static void CopyLogMethod() {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_C, lowerCase: true, ctrl: true);
+    }
+
+    private static void PasteLogMethod() {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_V, lowerCase: true, ctrl: true);
+    }
+
+    private static void ChangeLogTCINMethod() {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_I, lowerCase: true, ctrl: true);
+    }
+
+    private static void ChangeLogTCOUTMethod() {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_O, lowerCase: true, ctrl: true);
     }
 
     public static void LogInRadioEdit()
@@ -50,12 +68,12 @@ public static class SkyLogEvents
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.TAB, lowerCase: true);
     }
 
-    public static void ClearMarkersMethod()
+    private static void ClearMarkersMethod()
     {
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_R, ctrl: true);
     }
 
-    public static void CopyPlayerTimeCodeMethod()
+    private static void CopyPlayerTimeCodeMethod()
     {
         if (selectedBrowser == null)
             return;
@@ -83,7 +101,7 @@ public static class SkyLogEvents
         browserHost.SendKeyEvent(spaceUpEvent);
     }
 
-    public static void BackToLiveMethod()
+    private static void BackToLiveMethod()
     {
         if (selectedBrowser == null)
             return;
@@ -131,7 +149,7 @@ public static class SkyLogEvents
         browserHost.SendKeyEvent(ctrlUpEvent);
     }
 
-    public static void TabMethod()
+    private static void TabMethod()
     {
         if (selectedBrowser == null)
             return;
@@ -159,7 +177,7 @@ public static class SkyLogEvents
         browserHost.SendKeyEvent(tabUpEvent);
     }
 
-    public static void CancelOpenLogMethod()
+    private static void CancelOpenLogMethod()
     {
         if (selectedBrowser == null)
         {
@@ -186,7 +204,7 @@ public static class SkyLogEvents
         browserHost.SendKeyEvent(deleteUpEvent);
     }
 
-    public static void CancelLogMethod()
+    private static void CancelLogMethod()
     {
         if (selectedBrowser == null)
         {
@@ -236,7 +254,7 @@ public static class SkyLogEvents
         browserHost.SendKeyEvent(ctrlUpEvent);
     }
 
-    public static void CloseLogMethod()
+    private static void CloseLogMethod()
     {
         if (selectedBrowser == null)
         {
@@ -283,13 +301,17 @@ public static class SkyLogEvents
 
     }
 
-    public static void NewLogMethod()
+    private static void NewLogMethod()
     {
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_A, ctrl: true);
     }
 
-    public static void PlayVideoMethod()
+    private static void PlayVideoMethod()
     {
+        if (selectedBrowser == null)
+        {
+            return;
+        }
         var browserHost = selectedBrowser.browser.GetBrowserHost();
 
         // Send the Ctrl (Left) keydown event
@@ -334,7 +356,7 @@ public static class SkyLogEvents
 
     }
 
-    public static void PauseVideoMethod()
+    private static void PauseVideoMethod()
     {
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_P, ctrl: true);
     }

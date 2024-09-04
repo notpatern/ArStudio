@@ -8,7 +8,7 @@ public static class CefInstance {
     public static async Task InitializeCef() {
         CefSettings settings = new CefSettings
         {
-            BrowserSubprocessPath = "E:\\Github\\ArStudio\\ArStudio\\bin\\x64\\Debug\\net8.0-windows\\runtimes\\win-x64\\native\\CefSharp.BrowserSubprocess.exe",
+            //BrowserSubprocessPath = "E:\\Github\\ArStudio\\ArStudio\\bin\\x64\\Debug\\net8.0-windows\\runtimes\\win-x64\\native\\CefSharp.BrowserSubprocess.exe",
             CachePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "CefSharp\\Cache"

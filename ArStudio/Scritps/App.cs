@@ -5,6 +5,7 @@ using StereoKit;
 using StereoKit.Framework;
 using TestWebAr.Scritps.Objects;
 using TestWebAr.Scritps.Services;
+using ArStudio.Scritps.Services;
 
 public class App
 {
@@ -13,8 +14,6 @@ public class App
     HandTracking handTracking = new HandTracking();
 
     List<Browser> browserList = new List<Browser>();
-
-    Material floorMaterial;
 
     Browser selectedBrowser;
 
@@ -25,6 +24,8 @@ public class App
     Pose browserSelectPosition = new Pose(new Vec3(0, 0, 0.02f), Quat.LookDir(0, 0, 1));
 
     KeyForwarder keyForwarder = new KeyForwarder();
+
+    ObsWebSocket caca;
 
     int browserAmount;
 
@@ -45,12 +46,18 @@ public class App
 
         passthroughStepper.EnabledPassthrough = true;
 
+        caca = new ObsWebSocket();
+
+        caca.Connect();
+
         volumeSlider = new VolumeSlider("Volume", new Pose(0, 0, -0.3f, Quat.LookDir(0, 0, 1)));
         browserAmount = 0;
         for (int i = 0; i < 2; i++)
         {
-            for (int j = -1; j < 2; j++) {
-                if (j == 0 && i == 1) {
+            for (int j = -1; j < 2; j++)
+            {
+                if (j == 0 && i == 1)
+                {
                     continue;
                 }
 
@@ -60,12 +67,14 @@ public class App
 
                 Vec2 scale = new Vec2(0.5f, 0.5f);
 
-                if (j == 0) {
+                if (j == 0)
+                {
                     windowPosition.y = -0.1f;
                     scale = new Vec2(0.8f, 0.8f);
                 }
 
-                if (j != 0) {
+                if (j != 0)
+                {
                     Vec3 directionVector = Input.Head.position - windowPosition;
                     directionVector.y = 0;
                     directionVector = directionVector.Normalized;
@@ -100,7 +109,8 @@ public class App
         BindEvents();
     }
 
-    private void SelectBrowser(Browser browser) {
+    private void SelectBrowser(Browser browser)
+    {
         selectedBrowser = browser;
         browser.selected = true;
         SkyLogEvents.selectedBrowser = selectedBrowser;
@@ -112,17 +122,9 @@ public class App
         dirtyBrowser = browser;
     }
 
-    private void BindEvents() {
-        SkyLogEvents.Pause += PauseVideo;
-        SkyLogEvents.Play += PlayVideo;
-        SkyLogEvents.NewLog += NewLog;
-        SkyLogEvents.CloseLog += CloseLog;
-        SkyLogEvents.CancelLog += CancelLog;
-        SkyLogEvents.CancelOpenLog += CancelOpenLog;
-        SkyLogEvents.CopyPlayerTimeCode += CopyPlayerTimeCode;
-        SkyLogEvents.Tab += Tab;
-        SkyLogEvents.BackToLive += BackToLive;
-        SkyLogEvents.ClearMarkers += ClearMarkers;
+    private void BindEvents()
+    {
+        SkyLogEvents.BindEvents();
         handTracking.RightFastHand += LogInRadioEdit;
     }
 
@@ -143,7 +145,8 @@ public class App
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.TAB, lowerCase: true);
     }
 
-    private void ClearMarkers() {
+    private void ClearMarkers()
+    {
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_R, ctrl: true);
     }
 
@@ -175,7 +178,8 @@ public class App
         browserHost.SendKeyEvent(spaceUpEvent);
     }
 
-    private void BackToLive() {
+    private void BackToLive()
+    {
         if (selectedBrowser == null)
             return;
 
@@ -185,9 +189,9 @@ public class App
         var ctrlDownEvent = new KeyEvent
         {
             WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
-                           NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
-                           Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Ctrl
-                           Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is down
+            NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
+            Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for Ctrl
+            Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is down
         };
         browserHost.SendKeyEvent(ctrlDownEvent);
 
@@ -195,9 +199,9 @@ public class App
         var lDownEvent = new KeyEvent
         {
             WindowsKeyCode = 0x4C,                             // VK_L (L key)
-                           NativeKeyCode = 0x26,                              // Scan code for L
-                           Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for L
-                           Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
+            NativeKeyCode = 0x26,                              // Scan code for L
+            Type = KeyEventType.RawKeyDown,                    // RawKeyDown event for L
+            Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
         };
         browserHost.SendKeyEvent(lDownEvent);
 
@@ -205,9 +209,9 @@ public class App
         var lUpEvent = new KeyEvent
         {
             WindowsKeyCode = 0x4C,                             // VK_L (L key)
-                           NativeKeyCode = 0x26,                              // Scan code for L
-                           Type = KeyEventType.KeyUp,                         // KeyUp event for L
-                           Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
+            NativeKeyCode = 0x26,                              // Scan code for L
+            Type = KeyEventType.KeyUp,                         // KeyUp event for L
+            Modifiers = CefEventFlags.ControlDown              // Indicates the Ctrl key is still down
         };
         browserHost.SendKeyEvent(lUpEvent);
 
@@ -215,9 +219,9 @@ public class App
         var ctrlUpEvent = new KeyEvent
         {
             WindowsKeyCode = 0xA2,                             // VK_LCONTROL (Left Control key)
-                           NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
-                           Type = KeyEventType.KeyUp,                         // KeyUp event for Ctrl
-                           Modifiers = CefEventFlags.None                     // No modifiers as Ctrl is being released
+            NativeKeyCode = 0x1D,                              // Scan code for Left Control (LCtrl)
+            Type = KeyEventType.KeyUp,                         // KeyUp event for Ctrl
+            Modifiers = CefEventFlags.None                     // No modifiers as Ctrl is being released
         };
         browserHost.SendKeyEvent(ctrlUpEvent);
     }
@@ -381,6 +385,11 @@ public class App
 
     private void PlayVideo()
     {
+        if (selectedBrowser == null)
+        {
+            return;
+        }
+
         var browserHost = selectedBrowser.browser.GetBrowserHost();
 
         // Send the Ctrl (Left) keydown event
@@ -430,10 +439,13 @@ public class App
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_P, ctrl: true);
     }
 
-    void BrowserSelectPanel() {
+    void BrowserSelectPanel()
+    {
         UI.WindowBegin("Select Browser", ref browserSelectPosition);
-        for (int i = 0; i < 5; i++) {
-            if (UI.Button("Screen " + (i + 1))) {
+        for (int i = 0; i < 5; i++)
+        {
+            if (UI.Button("Screen " + (i + 1)))
+            {
                 SelectBrowser(browserList[i]);
             }
         }
@@ -442,6 +454,7 @@ public class App
 
     public void Update()
     {
+        caca.Update();
         CaptureKeyboardInput();
         volumeSlider.UpdateSlider();
         UpdateBrowsers();
@@ -518,7 +531,8 @@ public class App
     }
 }
 
-public class KeyForwarder {
+public class KeyForwarder
+{
 
     public void CheckAndForwardKey(Browser selectedBrowser, Key skKey, VirtualKeyCode vkCode)
     {
