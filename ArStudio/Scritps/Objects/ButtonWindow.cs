@@ -16,38 +16,53 @@ namespace TestWebAr.Scritps.Objects
         public void UpdateWindow()
         {
             UI.WindowBegin("Buttons", ref position);
-            UI.Button("Button 01");
+            if (UI.Button("Play")) {
+                SkyLogEvents.Play.Invoke();
+            }
             UI.SameLine();
-            UI.Button("Button 02");
+            if (UI.Button("Pause")) {
+                SkyLogEvents.Pause.Invoke();
+            }
 
-            UI.Button("Button 03");
+            if (UI.Button("Cancel Log")) {
+                SkyLogEvents.CancelLog.Invoke();
+            }
             UI.SameLine();
-            UI.Button("Button 04");
+            if (UI.Button("Clear Markers")) {
+                SkyLogEvents.ClearMarkers.Invoke();
+            }
 
-            UI.Button("Button 05");
+            if (UI.Button("Copy Log")) {
+                SkyLogEvents.CopyLog.Invoke();
+            }
             UI.SameLine();
-            UI.Button("Button 06");
+            if (UI.Button("Paste Log")) {
+                SkyLogEvents.PasteLog.Invoke();
+            }
 
-            UI.Button("Button 07");
+            if (UI.Button("Focus/Unfocus text box")) {
+                SkyLogEvents.Tab.Invoke();
+            }
             UI.SameLine();
-            UI.Button("Button 08");
+            if (UI.Button("Copy Time Code")) {
+                SkyLogEvents.CopyPlayerTimeCode.Invoke();
+            }
 
-            UI.Button("Button 09");
+            if (UI.Button("Paste Time Code")) {
+                SkyLogEvents.PastePlayerTimeCode.Invoke();
+            }
             UI.SameLine();
-            UI.Button("Button 10");
+            if (UI.Button("Change log TCIN")) {
+                SkyLogEvents.ChangeLogTCIN.Invoke();
+            }
 
-            UI.Button("Button 11");
+            if (UI.Button("Change log TCOUT")) {
+                SkyLogEvents.ChangeLogTCOUT.Invoke();
+            }
             UI.SameLine();
-            UI.Button("Button 12");
-
-            UI.Button("Button 13");
-            UI.SameLine();
-            UI.Button("Button 14");
-
-            UI.Button("Button 15");
-            UI.SameLine();
-            UI.Button("Button 16");
-
+            if (UI.Button("Back to Live")) {
+                SkyLogEvents.BackToLive.Invoke();
+            }
             UI.WindowEnd();
         }
     }

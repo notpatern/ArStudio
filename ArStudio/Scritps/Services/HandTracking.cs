@@ -56,22 +56,6 @@ namespace TestWebAr.Scritps.Services
         public Action RightFastHand;
         public Action LeftHandDownFast;
 
-        public Action NewLog;
-        public Action CloseLog;
-        public Action CancelLog;
-        public Action Play;
-        public Action Pause;
-        public Action CancelOpenLog;
-        public Action Tab;
-        public Action BackToLive;
-        public Action CopyPlayerTimeCode;
-        public Action ClearMarkers;
-
-        public Action CopyLog;
-        public Action PasteLog;
-        public Action ChangeLogTCING;
-        public Action ChangeLogTCOUT;
-
         private float inputBuffer;
 
         public HandTracking()
@@ -181,19 +165,19 @@ namespace TestWebAr.Scritps.Services
                 {
                     if (leftHand.IsGripped && rightHand.IsGripped)
                     {
-                        Pause.Invoke();
+                        SkyLogEvents.Pause.Invoke();
                         inputBuffer = 0.2f;
                     }
 
                     if (Vec3.Dot(rightHand.palm.Forward.Normalized, leftHand.palm.Forward.Normalized) <= -0.60 && !(leftHand.IsGripped && rightHand.IsGripped))
                     {
-                        Play.Invoke();
+                        SkyLogEvents.Play.Invoke();
                         inputBuffer = 0.2f;
                     }
 
                     if (leftHand.IsPinched && rightHand.IsPinched)
                     {
-                        CancelOpenLog.Invoke();
+                        SkyLogEvents.CancelOpenLog.Invoke();
                         inputBuffer = 0.2f;
                     }
                 }
@@ -201,7 +185,7 @@ namespace TestWebAr.Scritps.Services
 
             if (Vec3.Dot(rightHand.palm.Forward.Normalized, leftHand.palm.Forward.Normalized) <= -0.60) {
                 if (rightHandVelocity.y >= 120) {
-                    BackToLive.Invoke();
+                    SkyLogEvents.BackToLive.Invoke();
                     inputBuffer = 0.2f;
                 }
             }
@@ -211,7 +195,7 @@ namespace TestWebAr.Scritps.Services
                 if (rightHandVelocity.x >= 120)
                 {
                     if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
-                        NewLog.Invoke();
+                        SkyLogEvents.NewLog.Invoke();
                         inputBuffer = 0.2f;
                     }
                 }
@@ -219,7 +203,7 @@ namespace TestWebAr.Scritps.Services
                 if (rightHandVelocity.x <= -120)
                 {
                     if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
-                        CloseLog.Invoke();
+                        SkyLogEvents.CloseLog.Invoke();
                         inputBuffer = 0.2f;
                     }
                 }
@@ -227,7 +211,7 @@ namespace TestWebAr.Scritps.Services
                 if (rightHandVelocity.y >= 120)
                 {
                     if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
-                        CancelLog.Invoke();
+                        SkyLogEvents.CancelLog.Invoke();
                         inputBuffer = 0.2f;
                     }
                 }
@@ -235,19 +219,19 @@ namespace TestWebAr.Scritps.Services
 
             if (leftHandVelocity.x >= 100 && rightHandVelocity.x <= 100) {
                 if (leftHand.IsPinched && rightHand.IsPinched) {
-                    ClearMarkers.Invoke();
+                    SkyLogEvents.ClearMarkers.Invoke();
                     inputBuffer = 0.2f;
                 }
             }
 
             if (leftHand.IsGripped) {
-                CopyPlayerTimeCode.Invoke();
+                SkyLogEvents.CopyPlayerTimeCode.Invoke();
                 inputBuffer = 0.2f;
             }
 
             if (leftHandVelocity.x >= 120 && leftHandAnglesDegree.x <= -30)
             {
-                Tab.Invoke();
+                SkyLogEvents.Tab.Invoke();
                 inputBuffer = 0.2f;
             }
 

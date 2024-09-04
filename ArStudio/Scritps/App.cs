@@ -96,12 +96,14 @@ public class App
 
         buttonWindow = new ButtonWindow("buttons", new Pose(0.4f, 0, -0.3f, Quat.LookDir(0, 0, 1)));
 
+        SkyLogEvents.keyForwarder = keyForwarder;
         BindEvents();
     }
 
     private void SelectBrowser(Browser browser) {
         selectedBrowser = browser;
         browser.selected = true;
+        SkyLogEvents.selectedBrowser = selectedBrowser;
         if (dirtyBrowser != null && dirtyBrowser != selectedBrowser)
         {
             dirtyBrowser.Mute();
@@ -111,17 +113,17 @@ public class App
     }
 
     private void BindEvents() {
-        handTracking.Pause += PauseVideo;
-        handTracking.Play += PlayVideo;
-        handTracking.NewLog += NewLog;
-        handTracking.CloseLog += CloseLog;
-        handTracking.CancelLog += CancelLog;
-        handTracking.CancelOpenLog += CancelOpenLog;
-        handTracking.CopyPlayerTimeCode += CopyPlayerTimeCode;
-        handTracking.Tab += Tab;
-        handTracking.BackToLive += BackToLive;
+        SkyLogEvents.Pause += PauseVideo;
+        SkyLogEvents.Play += PlayVideo;
+        SkyLogEvents.NewLog += NewLog;
+        SkyLogEvents.CloseLog += CloseLog;
+        SkyLogEvents.CancelLog += CancelLog;
+        SkyLogEvents.CancelOpenLog += CancelOpenLog;
+        SkyLogEvents.CopyPlayerTimeCode += CopyPlayerTimeCode;
+        SkyLogEvents.Tab += Tab;
+        SkyLogEvents.BackToLive += BackToLive;
+        SkyLogEvents.ClearMarkers += ClearMarkers;
         handTracking.RightFastHand += LogInRadioEdit;
-        handTracking.ClearMarkers += ClearMarkers;
     }
 
     private void UpdateBrowsers()

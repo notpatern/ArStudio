@@ -9,12 +9,12 @@ public class CefOffScreenDropdownHandler {
     public CefOffScreenDropdownHandler(ChromiumWebBrowser browser) {
         _browser = browser;
 
-        // Inject JavaScript to detect dropdown opening
         _browser.FrameLoadEnd += OnFrameLoadEnd;
         _browser.JavascriptMessageReceived += OnJavascriptMessageReceived;
     }
 
     private void OnFrameLoadEnd(object sender, FrameLoadEndEventArgs e) {
+        Console.WriteLine("JavaScriptLoaded");
         if (e.Frame.IsMain) {
             const string script = @"
                 (function() {
@@ -24,7 +24,7 @@ public class CefOffScreenDropdownHandler {
                             CefSharp.PostMessage('dropdown-opened');
                         });
                     });
-                    
+
                     document.addEventListener('click', function(event) {
                         if (event.target.tagName === 'SELECT') {
                             CefSharp.PostMessage('dropdown-opened');
@@ -33,10 +33,12 @@ public class CefOffScreenDropdownHandler {
                 })();
             ";
             e.Frame.ExecuteJavaScriptAsync(script);
+            Console.WriteLine("Scipt Executed");
         }
     }
 
     private void OnJavascriptMessageReceived(object sender, JavascriptMessageReceivedEventArgs e) {
+        Console.WriteLine(e.Message.ToString());
         if (e.Message.ToString() == "dropdown-opened") {
             _dropdownOpened = true;
         }

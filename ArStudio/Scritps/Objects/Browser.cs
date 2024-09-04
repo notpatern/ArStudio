@@ -6,6 +6,7 @@ using CefSharp.OffScreen;
 using StereoKit;
 
 namespace TestWebAr.Scritps.Objects;
+
 public class Browser
 {
     public Tex Texture { get; internal set; }
@@ -62,6 +63,9 @@ public class Browser
         CefRuntime.SubscribeAnyCpuAssemblyResolver();
 #endif
         Init();
+        while (dropDownHandler == null) {
+
+        }
     }
 
 
@@ -69,11 +73,11 @@ public class Browser
     {
         browser = new ChromiumWebBrowser(Url);
         await browser.WaitForInitialLoadAsync();
-        dropDownHandler = new CefOffScreenDropdownHandler(browser);
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
         Mute();
         InitializeSetVolumerJsFunction();
+        dropDownHandler = new CefOffScreenDropdownHandler(browser);
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)
@@ -174,6 +178,8 @@ public class Browser
     Vec2 startAt;
     Vec2 prevAt;
 
+    bool dropDownOpen = false;
+
     public void UpdateBrowser()
     {
         Vec2 windowSize = new Vec2(browserScale.x + 0.02f, (browserScale.y + 0.033f) * browserAspect);
@@ -190,15 +196,25 @@ public class Browser
         StepAsUI();
         UI.WindowEnd();
 
+        if (dropDownHandler == null) {
+            Console.WriteLine("il est null ce fou");
+        }
+
         if (dropDownHandler != null && dropDownHandler.IsDropdownOpened()) {
-            // add custom drop down to manually select
+            dropDownOpen = true;
+            Console.WriteLine("dropdown opened");
+        }
+
+        if (dropDownOpen) {
             Pose buttonsPose = new Pose(windowPosition.position.x, windowPosition.position.y, windowPosition.position.z + 0.05f);
             UI.WindowBegin("Dropdown Menu", ref buttonsPose);
             if (UI.Button("Foot")) {
                 SelectDropdownOption(browser.GetMainFrame(), "form-control ng-pristine ng-valid, ng-touched", "1");
+                dropDownOpen = false;
             }
             if (UI.Button("Truc")) {
                 SelectDropdownOption(browser.GetMainFrame(), "form-control ng-pristine ng-valid, ng-touched", "2");
+                dropDownOpen = false;
             }
             UI.WindowEnd();
         }
