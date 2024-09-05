@@ -155,10 +155,6 @@ namespace TestWebAr.Scritps.Services
 
         private void UpdateHandTrackingChecks(object sender, ElapsedEventArgs e)
         {
-            inputBuffer -= (float)fixedDeltaTime;
-            if (inputBuffer > 0) {
-                return;
-            }
             if (Vec3.Distance(leftHand.palm.position, rightHand.palm.position) <= 0.07f)
             {
                 if (leftHandVelocity.x >= 100 && rightHandVelocity.x <= 100)
@@ -166,19 +162,16 @@ namespace TestWebAr.Scritps.Services
                     if (leftHand.IsGripped && rightHand.IsGripped)
                     {
                         SkyLogEvents.Pause.Invoke();
-                        inputBuffer = 0.2f;
                     }
 
                     if (Vec3.Dot(rightHand.palm.Forward.Normalized, leftHand.palm.Forward.Normalized) <= -0.60 && !(leftHand.IsGripped && rightHand.IsGripped))
                     {
                         SkyLogEvents.Play.Invoke();
-                        inputBuffer = 0.2f;
                     }
 
                     if (leftHand.IsPinched && rightHand.IsPinched)
                     {
                         SkyLogEvents.CancelOpenLog.Invoke();
-                        inputBuffer = 0.2f;
                     }
                 }
             }
@@ -186,7 +179,6 @@ namespace TestWebAr.Scritps.Services
             if (Vec3.Dot(rightHand.palm.Forward.Normalized, leftHand.palm.Forward.Normalized) <= -0.60) {
                 if (rightHandVelocity.y >= 120) {
                     SkyLogEvents.BackToLive.Invoke();
-                    inputBuffer = 0.2f;
                 }
             }
 
@@ -196,7 +188,6 @@ namespace TestWebAr.Scritps.Services
                 {
                     if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
                         SkyLogEvents.NewLog.Invoke();
-                        inputBuffer = 0.2f;
                     }
                 }
 
@@ -204,7 +195,6 @@ namespace TestWebAr.Scritps.Services
                 {
                     if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
                         SkyLogEvents.CloseLog.Invoke();
-                        inputBuffer = 0.2f;
                     }
                 }
 
@@ -212,7 +202,6 @@ namespace TestWebAr.Scritps.Services
                 {
                     if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
                         SkyLogEvents.CancelLog.Invoke();
-                        inputBuffer = 0.2f;
                     }
                 }
             }
@@ -220,25 +209,21 @@ namespace TestWebAr.Scritps.Services
             if (leftHandVelocity.x >= 100 && rightHandVelocity.x <= 100) {
                 if (leftHand.IsPinched && rightHand.IsPinched) {
                     SkyLogEvents.ClearMarkers.Invoke();
-                    inputBuffer = 0.2f;
                 }
             }
 
             if (leftHand.IsGripped) {
                 SkyLogEvents.CopyPlayerTimeCode.Invoke();
-                inputBuffer = 0.2f;
             }
 
             if (leftHandVelocity.x >= 120 && leftHandAnglesDegree.x <= -30)
             {
                 SkyLogEvents.Tab.Invoke();
-                inputBuffer = 0.2f;
             }
 
             if (rightHandVelocity.y <= -140 && rightHandAnglesDegree.y <= 15)
             {
                 RightFastHand.Invoke();
-                inputBuffer = 0.2f;
             }
         }
     }

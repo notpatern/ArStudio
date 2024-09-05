@@ -63,9 +63,9 @@ public class Browser
         CefRuntime.SubscribeAnyCpuAssemblyResolver();
 #endif
         Init();
-        while (dropDownHandler == null) {
-
-        }
+        /*while (dropDownHandler == null) {*/
+        /**/
+        /*}*/
     }
 
 
