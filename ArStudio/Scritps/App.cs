@@ -85,7 +85,7 @@ public class App
 
                 browserList.Add(
                         new Browser(
-                            "https://skylog-demo.broadteam.eu/login",
+                            "https://skylog-demo.broadteam.eu",
                             browserAmount.ToString(),
                             new Pose(windowPosition, lookDirection),
                             scale.x,

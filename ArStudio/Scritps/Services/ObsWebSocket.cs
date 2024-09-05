@@ -17,7 +17,6 @@ public class ObsWebSocket
     }
 
     public void Connect() {
-        obs.ConnectAsync("ws://91.121.35.154:4455", "");
     }
 
     public void Update() {
