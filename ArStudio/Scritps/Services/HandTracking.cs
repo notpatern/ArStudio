@@ -159,20 +159,29 @@ namespace TestWebAr.Scritps.Services
             {
                 if (leftHandVelocity.x >= 100 && rightHandVelocity.x <= 100)
                 {
-                    if (leftHand.IsGripped && rightHand.IsGripped)
-                    {
-                        SkyLogEvents.Pause.Invoke();
-                    }
-
-                    if (Vec3.Dot(rightHand.palm.Forward.Normalized, leftHand.palm.Forward.Normalized) <= -0.60 && !(leftHand.IsGripped && rightHand.IsGripped))
-                    {
-                        SkyLogEvents.Play.Invoke();
-                    }
-
                     if (leftHand.IsPinched && rightHand.IsPinched)
                     {
                         SkyLogEvents.CancelOpenLog.Invoke();
                     }
+                }
+            }
+
+            // player commands
+            if (leftHand.IsGripped && Vec3.Dot(leftHand.palm.Forward.Normalized, headForward) <= -0.60 ) {
+                if (rightHandRelativeVelocity.y >= 100) {
+                    SkyLogEvents.Pause.Invoke();
+                }
+
+                if (rightHandRelativeVelocity.y <= -100) {
+                    SkyLogEvents.Play.Invoke();
+                }
+
+                if (rightHandRelativeVelocity.x >= 100) {
+                    SkyLogEvents.RightFrame.Invoke();
+                }
+
+                if (rightHandRelativeVelocity.x <= -100) {
+                    SkyLogEvents.LeftFrame.Invoke();
                 }
             }
 

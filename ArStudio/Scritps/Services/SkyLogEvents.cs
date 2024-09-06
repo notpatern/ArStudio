@@ -24,6 +24,10 @@ public static class SkyLogEvents
     public static Action PasteLog;
     public static Action ChangeLogTCIN;
     public static Action ChangeLogTCOUT;
+    public static Action RightFrame;
+    public static Action LeftFrame;
+
+    public static Action SwapFrameMode;
 
     public static void BindEvents()
     {
@@ -41,6 +45,19 @@ public static class SkyLogEvents
         PasteLog += PasteLogMethod;
         ChangeLogTCIN += ChangeLogTCINMethod;
         ChangeLogTCOUT += ChangeLogTCINMethod;
+    }
+
+    // idk wtf this does please find it out asap
+    private static void SwapFrameModeMethod() {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F1, ctrl: true);
+    }
+
+    private static void RightFrameMethod() {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.RIGHT, ctrl: true);
+    }
+
+    private static void LeftFrameMethod() {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.LEFT, ctrl: true);
     }
 
     private static void CopyLogMethod() {
