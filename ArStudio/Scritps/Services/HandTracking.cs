@@ -167,21 +167,25 @@ namespace TestWebAr.Scritps.Services
             }
 
             // player commands
-            if (leftHand.IsGripped && Vec3.Dot(leftHand.palm.Forward.Normalized, headForward) <= -0.60 ) {
-                if (rightHandRelativeVelocity.y >= 100) {
+            if (leftHand.IsGripped) {
+                if (rightHandVelocity.y <= -100) {
                     SkyLogEvents.Pause.Invoke();
+                    Console.WriteLine("pause");
                 }
 
-                if (rightHandRelativeVelocity.y <= -100) {
+                if (rightHandVelocity.y >= 100) {
                     SkyLogEvents.Play.Invoke();
+                    Console.WriteLine("play");
                 }
 
-                if (rightHandRelativeVelocity.x >= 100) {
+                if (rightHandVelocity.x >= 100) {
                     SkyLogEvents.RightFrame.Invoke();
+                    Console.WriteLine("RightFrame");
                 }
 
-                if (rightHandRelativeVelocity.x <= -100) {
+                if (rightHandVelocity.x <= -100) {
                     SkyLogEvents.LeftFrame.Invoke();
+                    Console.WriteLine("LeftFrame");
                 }
             }
 
@@ -232,7 +236,7 @@ namespace TestWebAr.Scritps.Services
 
             if (rightHandVelocity.y <= -140 && rightHandAnglesDegree.y <= 15)
             {
-                RightFastHand.Invoke();
+                //RightFastHand.Invoke();
             }
         }
     }

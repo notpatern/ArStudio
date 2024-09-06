@@ -26,8 +26,13 @@ public static class SkyLogEvents
     public static Action ChangeLogTCOUT;
     public static Action RightFrame;
     public static Action LeftFrame;
+    public static Action Paste;
 
-    public static Action SwapFrameMode;
+    public static Action F1;
+    public static Action F2;
+    public static Action F3;
+    public static Action F4;
+    public static Action F5;
 
     public static void BindEvents()
     {
@@ -45,34 +50,72 @@ public static class SkyLogEvents
         PasteLog += PasteLogMethod;
         ChangeLogTCIN += ChangeLogTCINMethod;
         ChangeLogTCOUT += ChangeLogTCINMethod;
+        RightFrame += RightFrameMethod;
+        LeftFrame += LeftFrameMethod;
+        F1 += F1Method;
+        F2 += F1Method;
+        F3 += F1Method;
+        F4 += F1Method;
+        F5 += F1Method;
     }
 
-    // idk wtf this does please find it out asap
-    private static void SwapFrameModeMethod() {
-        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F1, ctrl: true);
+    private static void F1Method()
+    {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F1, ctrl: true, shift: true);
     }
 
-    private static void RightFrameMethod() {
+    private static void F2Method()
+    {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F2, ctrl: true, shift: true);
+    }
+
+    private static void F3Method()
+    {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F3, ctrl: true, shift: true);
+    }
+
+    private static void F4Method()
+    {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F4, ctrl: true, shift: true);
+    }
+
+    private static void F5Method()
+    {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F5, ctrl: true, shift: true);
+    }
+
+    private static void PasteMethod()
+    {
+        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_V, ctrl: true);
+    }
+
+    private static void RightFrameMethod()
+    {
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.RIGHT, ctrl: true);
     }
 
-    private static void LeftFrameMethod() {
+    private static void LeftFrameMethod()
+    {
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.LEFT, ctrl: true);
     }
 
-    private static void CopyLogMethod() {
+    private static void CopyLogMethod()
+    {
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_C, lowerCase: true, ctrl: true);
     }
 
-    private static void PasteLogMethod() {
+    private static void PasteLogMethod()
+    {
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_V, lowerCase: true, ctrl: true);
     }
 
-    private static void ChangeLogTCINMethod() {
+    private static void ChangeLogTCINMethod()
+    {
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_I, lowerCase: true, ctrl: true);
     }
 
-    private static void ChangeLogTCOUTMethod() {
+    private static void ChangeLogTCOUTMethod()
+    {
         keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.VK_O, lowerCase: true, ctrl: true);
     }
 
