@@ -49,7 +49,6 @@ public class App
         passthroughStepper.EnabledPassthrough = true;
 
         caca = new ObsWebSocket();
-
         caca.Connect();
 
         volumeSlider = new VolumeSlider("Volume", new Pose(0, 0, -0.3f, Quat.LookDir(0, 0, 1)));
@@ -87,6 +86,8 @@ public class App
 
                 browserList.Add(
                         new Browser(
+                            //"https://javascript.info/keyboard-events",
+                            //"https://www.youtube.com/watch?v=BdQe_lGI-hA",
                             "https://skylog-demo.broadteam.eu/",
                             browserAmount.ToString(),
                             new Pose(windowPosition, lookDirection),

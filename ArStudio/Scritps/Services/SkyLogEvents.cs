@@ -53,35 +53,343 @@ public static class SkyLogEvents
         RightFrame += RightFrameMethod;
         LeftFrame += LeftFrameMethod;
         F1 += F1Method;
-        F2 += F1Method;
-        F3 += F1Method;
-        F4 += F1Method;
-        F5 += F1Method;
+        F2 += F2Method;
+        F3 += F3Method;
+        F4 += F4Method;
+        F5 += F5Method;
     }
 
     private static void F1Method()
     {
-        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F1, ctrl: true, shift: true);
+        if (selectedBrowser == null)
+            return;
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        // Send the Ctrl keydown event
+        var ctrlDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x11,                              // VK_CONTROL (Ctrl key)
+                           NativeKeyCode = 0x1D,                               // Scan code for Ctrl
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for Ctrl
+                           Modifiers = CefEventFlags.ControlDown               // Ctrl modifier
+        };
+        browserHost.SendKeyEvent(ctrlDownEvent);
+
+        // Send the Shift keydown event
+        var shiftDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x10,                              // VK_SHIFT (Shift key)
+                           NativeKeyCode = 0x2A,                               // Scan code for Shift
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for Shift
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(shiftDownEvent);
+
+        // Send the F1 keydown event
+        var f1DownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x70,                              // VK_F1 (F1 key)
+                           NativeKeyCode = 0x3B,                               // Scan code for F1
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for F1
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(f1DownEvent);
+
+        // Send the F1 keyup event
+        var f1UpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x70,                              // VK_F1 (F1 key)
+                           NativeKeyCode = 0x3B,                               // Scan code for F1
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for F1
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(f1UpEvent);
+
+        // Send the Shift keyup event
+        var shiftUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x10,                              // VK_SHIFT (Shift key)
+                           NativeKeyCode = 0x2A,                               // Scan code for Shift
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for Shift
+                           Modifiers = CefEventFlags.ControlDown               // Ctrl modifier
+        };
+        browserHost.SendKeyEvent(shiftUpEvent);
+
+        // Send the Ctrl keyup event
+        var ctrlUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x11,                              // VK_CONTROL (Ctrl key)
+                           NativeKeyCode = 0x1D,                               // Scan code for Ctrl
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for Ctrl
+                           Modifiers = CefEventFlags.None                      // No modifiers
+        };
+        browserHost.SendKeyEvent(ctrlUpEvent);
     }
 
     private static void F2Method()
     {
-        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F2, ctrl: true, shift: true);
+        if (selectedBrowser == null)
+            return;
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        // Send the Ctrl keydown event
+        var ctrlDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x11,                              // VK_CONTROL (Ctrl key)
+                           NativeKeyCode = 0x1D,                               // Scan code for Ctrl
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for Ctrl
+                           Modifiers = CefEventFlags.ControlDown               // Ctrl modifier
+        };
+        browserHost.SendKeyEvent(ctrlDownEvent);
+
+        // Send the Shift keydown event
+        var shiftDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x10,                              // VK_SHIFT (Shift key)
+                           NativeKeyCode = 0x2A,                               // Scan code for Shift
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for Shift
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(shiftDownEvent);
+
+        var f2DownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x71,                              // VK_F1 (F1 key)
+                           NativeKeyCode = 0x3C,                               // Scan code for F1
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for F1
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(f2DownEvent);
+
+        var f2UpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x71,                              // VK_F1 (F1 key)
+                           NativeKeyCode = 0x3C,                               // Scan code for F1
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for F1
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(f2UpEvent);
+
+        // Send the Shift keyup event
+        var shiftUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x10,                              // VK_SHIFT (Shift key)
+                           NativeKeyCode = 0x2A,                               // Scan code for Shift
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for Shift
+                           Modifiers = CefEventFlags.ControlDown               // Ctrl modifier
+        };
+        browserHost.SendKeyEvent(shiftUpEvent);
+
+        // Send the Ctrl keyup event
+        var ctrlUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x11,                              // VK_CONTROL (Ctrl key)
+                           NativeKeyCode = 0x1D,                               // Scan code for Ctrl
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for Ctrl
+                           Modifiers = CefEventFlags.None                      // No modifiers
+        };
+        browserHost.SendKeyEvent(ctrlUpEvent);
+
     }
 
     private static void F3Method()
     {
-        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F3, ctrl: true, shift: true);
+        if (selectedBrowser == null)
+            return;
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        // Send the Ctrl keydown event
+        var ctrlDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x11,                              // VK_CONTROL (Ctrl key)
+                           NativeKeyCode = 0x1D,                               // Scan code for Ctrl
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for Ctrl
+                           Modifiers = CefEventFlags.ControlDown               // Ctrl modifier
+        };
+        browserHost.SendKeyEvent(ctrlDownEvent);
+
+        // Send the Shift keydown event
+        var shiftDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x10,                              // VK_SHIFT (Shift key)
+                           NativeKeyCode = 0x2A,                               // Scan code for Shift
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for Shift
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(shiftDownEvent);
+
+        var f3DownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x72,                              // VK_F1 (F1 key)
+                           NativeKeyCode = 0x3D,                               // Scan code for F1
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for F1
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(f3DownEvent);
+
+        var f3UpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x72,                              // VK_F1 (F1 key)
+                           NativeKeyCode = 0x3D,                               // Scan code for F1
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for F1
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(f3UpEvent);
+
+        // Send the Shift keyup event
+        var shiftUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x10,                              // VK_SHIFT (Shift key)
+                           NativeKeyCode = 0x2A,                               // Scan code for Shift
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for Shift
+                           Modifiers = CefEventFlags.ControlDown               // Ctrl modifier
+        };
+        browserHost.SendKeyEvent(shiftUpEvent);
+
+        // Send the Ctrl keyup event
+        var ctrlUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x11,                              // VK_CONTROL (Ctrl key)
+                           NativeKeyCode = 0x1D,                               // Scan code for Ctrl
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for Ctrl
+                           Modifiers = CefEventFlags.None                      // No modifiers
+        };
+        browserHost.SendKeyEvent(ctrlUpEvent);
     }
 
     private static void F4Method()
     {
-        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F4, ctrl: true, shift: true);
+        if (selectedBrowser == null)
+            return;
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        // Send the Ctrl keydown event
+        var ctrlDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x11,                              // VK_CONTROL (Ctrl key)
+                           NativeKeyCode = 0x1D,                               // Scan code for Ctrl
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for Ctrl
+                           Modifiers = CefEventFlags.ControlDown               // Ctrl modifier
+        };
+        browserHost.SendKeyEvent(ctrlDownEvent);
+
+        // Send the Shift keydown event
+        var shiftDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x10,                              // VK_SHIFT (Shift key)
+                           NativeKeyCode = 0x2A,                               // Scan code for Shift
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for Shift
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(shiftDownEvent);
+
+        var f4DownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x73,                              // VK_F1 (F1 key)
+                           NativeKeyCode = 0x3E,                               // Scan code for F1
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for F1
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(f4DownEvent);
+
+        var f4UpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x73,                              // VK_F1 (F1 key)
+                           NativeKeyCode =0x3E,                               // Scan code for F1
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for F1
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(f4UpEvent);
+
+        // Send the Shift keyup event
+        var shiftUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x10,                              // VK_SHIFT (Shift key)
+                           NativeKeyCode = 0x2A,                               // Scan code for Shift
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for Shift
+                           Modifiers = CefEventFlags.ControlDown               // Ctrl modifier
+        };
+        browserHost.SendKeyEvent(shiftUpEvent);
+
+        // Send the Ctrl keyup event
+        var ctrlUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x11,                              // VK_CONTROL (Ctrl key)
+                           NativeKeyCode = 0x1D,                               // Scan code for Ctrl
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for Ctrl
+                           Modifiers = CefEventFlags.None                      // No modifiers
+        };
+        browserHost.SendKeyEvent(ctrlUpEvent);
     }
 
     private static void F5Method()
     {
-        keyForwarder.ForwardKeyToCef(selectedBrowser, VirtualKeyCode.F5, ctrl: true, shift: true);
+        if (selectedBrowser == null)
+            return;
+
+        var browserHost = selectedBrowser.browser.GetBrowserHost();
+
+        // Send the Ctrl keydown event
+        var ctrlDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x11,                              // VK_CONTROL (Ctrl key)
+                           NativeKeyCode = 0x1D,                               // Scan code for Ctrl
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for Ctrl
+                           Modifiers = CefEventFlags.ControlDown               // Ctrl modifier
+        };
+        browserHost.SendKeyEvent(ctrlDownEvent);
+
+        // Send the Shift keydown event
+        var shiftDownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x10,                              // VK_SHIFT (Shift key)
+                           NativeKeyCode = 0x2A,                               // Scan code for Shift
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for Shift
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(shiftDownEvent);
+
+        var f5DownEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x74,                              // VK_F1 (F1 key)
+                           NativeKeyCode = 0x3F,                               // Scan code for F1
+                           Type = KeyEventType.RawKeyDown,                     // RawKeyDown event for F1
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(f5DownEvent);
+
+        var f5UpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x74,                              // VK_F1 (F1 key)
+                           NativeKeyCode = 0x3F,                               // Scan code for F1
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for F1
+                           Modifiers = CefEventFlags.ShiftDown | CefEventFlags.ControlDown  // Shift and Ctrl modifiers
+        };
+        browserHost.SendKeyEvent(f5UpEvent);
+
+        // Send the Shift keyup event
+        var shiftUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x10,                              // VK_SHIFT (Shift key)
+                           NativeKeyCode = 0x2A,                               // Scan code for Shift
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for Shift
+                           Modifiers = CefEventFlags.ControlDown               // Ctrl modifier
+        };
+        browserHost.SendKeyEvent(shiftUpEvent);
+
+        // Send the Ctrl keyup event
+        var ctrlUpEvent = new KeyEvent
+        {
+            WindowsKeyCode = 0x11,                              // VK_CONTROL (Ctrl key)
+                           NativeKeyCode = 0x1D,                               // Scan code for Ctrl
+                           Type = KeyEventType.KeyUp,                          // KeyUp event for Ctrl
+                           Modifiers = CefEventFlags.None                      // No modifiers
+        };
+        browserHost.SendKeyEvent(ctrlUpEvent);
     }
 
     private static void PasteMethod()

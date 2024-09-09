@@ -75,9 +75,10 @@ public class Browser
         await browser.WaitForInitialLoadAsync();
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
-        Mute();
+        //Mute();
         InitializeSetVolumerJsFunction();
         dropDownHandler = new CefOffScreenDropdownHandler(browser);
+        browser.ShowDevTools();
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)

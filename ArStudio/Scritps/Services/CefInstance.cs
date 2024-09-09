@@ -17,7 +17,7 @@ public static class CefInstance {
         settings.CefCommandLineArgs.Add("ignore-certificate-errors", "1");
         settings.CefCommandLineArgs.Add("enable-gpu-rasterization", "1");
         settings.CefCommandLineArgs.Add("disable-gpu", "0");
-
+        settings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
         settings.CefCommandLineArgs.Add("enable-media-stream", "1");
         settings.CefCommandLineArgs.Add("enable-features", "NetworkService,NetworkServiceInProcess");
 
