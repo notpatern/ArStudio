@@ -236,7 +236,7 @@ namespace TestWebAr.Scritps.Services
 
             if (rightHandVelocity.y <= -140 && rightHandAnglesDegree.y <= 15)
             {
-                //RightFastHand.Invoke();
+                RightFastHand.Invoke();
             }
         }
     }

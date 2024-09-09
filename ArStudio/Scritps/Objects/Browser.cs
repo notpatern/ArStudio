@@ -63,9 +63,6 @@ public class Browser
         CefRuntime.SubscribeAnyCpuAssemblyResolver();
 #endif
         Init();
-        /*while (dropDownHandler == null) {*/
-        /**/
-        /*}*/
     }
 
 
@@ -73,12 +70,13 @@ public class Browser
     {
         browser = new ChromiumWebBrowser(Url);
         await browser.WaitForInitialLoadAsync();
+        browser.Size = new System.Drawing.Size(1920, 1080);
         browser.Paint += Browser_Paint;
-        browserAspect = browser.Size.Height / (float)browser.Size.Width;
-        //Mute();
-        InitializeSetVolumerJsFunction();
+        //browserAspect = browser.Size.Height / (float)browser.Size.Width;
+        browserAspect = 9f/16f;
+        Mute();
+        InitializeSetVolumeJsFunction();
         dropDownHandler = new CefOffScreenDropdownHandler(browser);
-        browser.ShowDevTools();
     }
 
     private void Browser_Paint(object sender, OnPaintEventArgs e)
@@ -108,7 +106,7 @@ public class Browser
         browser.GetHost().SendKeyEvent(keyEvent);
     }
 
-    private void InitializeSetVolumerJsFunction()
+    private void InitializeSetVolumeJsFunction()
     {
         var script = @"
             (function() {
@@ -198,12 +196,10 @@ public class Browser
         UI.WindowEnd();
 
         if (dropDownHandler == null) {
-            Console.WriteLine("il est null ce fou");
         }
 
         if (dropDownHandler != null && dropDownHandler.IsDropdownOpened()) {
             dropDownOpen = true;
-            Console.WriteLine("dropdown opened");
         }
 
         if (dropDownOpen) {
