@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Scritps.Services;
 using StereoKit;
 using TestWebAr.Scritps.Objects;
 
@@ -7,13 +8,14 @@ public class DefaultSkyLog {
     bool bButtons;
     bool bHotKeyPanel;
 
+    HandTracking handTracking;
     ButtonWindow buttonWindow;
     PlayerHotKeys playerHotKeys;
     protected List<Browser> browserList = new List<Browser>();
     Browser selectedBrowser;
     Browser dirtyBrowser = null;
     VolumeSlider volumeSlider;
-    Pose browserSelectPosition = new Pose(new Vec3(0, 0, 0.2f), Quat.LookDir(0, 0, 1));
+    Pose browserSelectPosition = new Pose(new Vec3(-0.3f, -0.2f, -0.3f), Quat.LookDir(0, 0, 1));
     KeyForwarder keyForwarder = new KeyForwarder();
 
     protected int browserAmount;
@@ -30,7 +32,7 @@ public class DefaultSkyLog {
             return;
         }
 
-        volumeSlider = new VolumeSlider("Volume", new Pose(0, 0, -0.3f, Quat.LookDir(0, 0, 1)));
+        volumeSlider = new VolumeSlider("Volume", new Pose(0.3f, -0.2f, -0.3f, Quat.LookDir(0, 0, 1)));
     }
 
     private void InitiateButtonWindow() {
@@ -38,7 +40,7 @@ public class DefaultSkyLog {
             return;
         }
 
-        buttonWindow = new ButtonWindow("buttons", new Pose(0.4f, 0, -0.3f, Quat.LookDir(0, 0, 1)));
+        buttonWindow = new ButtonWindow("buttons", new Pose(0.4f, -0.2f, -0.3f, Quat.LookDir(0, 0, 1)));
     }
 
     private void InitiateHotKeyPanel() {
@@ -46,7 +48,7 @@ public class DefaultSkyLog {
             return;
         }
 
-        playerHotKeys = new PlayerHotKeys(new Pose(0.4f, 0, -0.4f, Quat.LookDir(0, 0, 1)));
+        playerHotKeys = new PlayerHotKeys(new Pose(0, -0.2f, -0.4f, Quat.LookDir(0, 0, 1)));
     }
 
     protected virtual void Init()
@@ -57,6 +59,7 @@ public class DefaultSkyLog {
         InitSkyLogBrowsers();
         SkyLogEvents.keyForwarder = keyForwarder;
         BindEvents();
+        handTracking = new HandTracking();
     }
 
     protected virtual void InitSkyLogBrowsers() {
@@ -72,13 +75,13 @@ public class DefaultSkyLog {
 
                 Quat lookDirection = Quat.LookDir(0, 0, 1);
 
-                Vec3 windowPosition = new Vec3(0.65f * j, (float)(0.36 * -i), -0.5f);
+                Vec3 windowPosition = new Vec3(0.65f * j, 0.005f - (float)(0.36 * -i), -0.7f);
 
                 Vec2 scale = new Vec2(0.5f, 0.5f);
 
                 if (j == 0)
                 {
-                    windowPosition.y = -0.1f;
+                    windowPosition.y = 0.285f;
                     scale = new Vec2(0.8f, 0.8f);
                 }
 
@@ -93,21 +96,28 @@ public class DefaultSkyLog {
                 }
 
                 if (j != 0) {
-
+                    browserList.Add(
+                            new Browser(
+                                "https://skylog-demo.broadteam.eu/multiview",
+                                browserAmount.ToString(),
+                                new Pose(windowPosition, lookDirection),
+                                scale.x,
+                                scale.y
+                                )
+                            );
                 }
                 else {
-
+                    browserList.Add(
+                            new Browser(
+                                "https://skylog-demo.broadteam.eu/",
+                                browserAmount.ToString(),
+                                new Pose(windowPosition, lookDirection),
+                                scale.x,
+                                scale.y
+                                )
+                            );
                 }
 
-                browserList.Add(
-                        new Browser(
-                            "https://skylog-demo.broadteam.eu/",
-                            browserAmount.ToString(),
-                            new Pose(windowPosition, lookDirection),
-                            scale.x,
-                            scale.y
-                            )
-                        );
 
                 while (browserList[browserAmount].browser == null) { }
                 while (!browserList[browserAmount].browser.IsBrowserInitialized) { }
@@ -166,7 +176,7 @@ public class DefaultSkyLog {
 
     private void BrowserSelectPanel()
     {
-        UI.WindowBegin("Select Browser", ref browserSelectPosition);
+        UI.WindowBegin("Select Window", ref browserSelectPosition);
         for (int i = 0; i < browserAmount; i++)
         {
             if (UI.Button("Screen " + (i + 1)))

@@ -18,7 +18,7 @@ public class App
 
         SKSettings settings = new SKSettings
         {
-            appName = "TestWebAr",
+            appName = "ArStudio",
             assetsFolder = "Assets",
             blendPreference = DisplayBlend.AnyTransparent,
             mode = AppMode.XR
@@ -32,19 +32,23 @@ public class App
         passthroughStepper.EnabledPassthrough = true;
     }
 
-    private void SelectMenuUpdate() {
+    private void SelectMenuUpdate()
+    {
         UI.WindowBegin("Ar Studio", ref menuSelectPosition);
-        if (UI.Button("Default")) {
+        if (UI.Button("Default"))
+        {
             skylog = new DefaultSkyLog(volumeSlider: true, hotKeyPanel: true);
             UpdateEvent = skylog.Update;
         }
 
-        if (UI.Button("Volume Demo")) {
+        if (UI.Button("Volume Demo"))
+        {
             skylog = new VolumeSkyLog(volumeSlider: true);
             UpdateEvent = skylog.Update;
         }
 
-        if (UI.Button("Obs Remote Control")) {
+        if (UI.Button("Obs Remote Control"))
+        {
             skylog = new ObsSkyLog(volumeSlider: true);
             UpdateEvent = skylog.Update;
         }
@@ -169,7 +173,8 @@ public class KeyForwarder
     }
 }
 
-public enum VirtualKeyCode {
+public enum VirtualKeyCode
+{
     VK_CONTROL = 0x11,
     VK_SHIFT = 0x10,
     VK_A = 0x41,

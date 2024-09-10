@@ -12,10 +12,21 @@ public class ObsWebSocket
     string scene;
     string url;
     string password;
+    bool update = false;
 
     public ObsWebSocket(string url, string password = "") {
         obs = new OBSWebsocket();
-        windowPosition = new Pose(0, 0, -0.2f);
+
+        Quat lookDirection = Quat.LookDir(0, 0, 1);
+
+        Vec3 position = new Vec3(0.65f , 0, -0.3f);
+
+        Vec3 directionVector = Input.Head.position - position;
+        directionVector.y = 0;
+        directionVector = directionVector.Normalized;
+        lookDirection = Quat.LookAt(Vec3.Forward, directionVector);
+
+        windowPosition = new Pose(0.65f , 0, -0.3f, lookDirection);
 
         this.url = url;
         this.password = password;
@@ -26,30 +37,30 @@ public class ObsWebSocket
 
     private void onDisconnect(object sender, ObsDisconnectionInfo e)
     {
-        Console.WriteLine("disconnected");
+        update = false;
     }
 
     private void onConnect(object sender, EventArgs e)
     {
-        Console.WriteLine("connected");
+        update = true;
     }
 
     public void Connect() {
+        if (obs == null) {
+            return;
+        }
         obs.ConnectAsync(url, password);
     }
 
     public void Update() {
-        if (!obs.IsConnected) {
+        if (!update) {
             return;
         }
 
         if (scene == null) {
             scene = obs.GetSceneList().Scenes[0].Name.ToString();
 
-            Console.WriteLine("test0");
         }
-
-        Console.WriteLine("test1");
 
         UI.WindowBegin("Obs Remote Control", ref windowPosition);
         if (obs.GetRecordStatus().IsRecording) {
@@ -63,26 +74,20 @@ public class ObsWebSocket
             }
         }
 
-        Console.WriteLine("test2");
-
         UI.NextLine();
-
-        Console.WriteLine("test3");
 
         foreach (var source in obs.GetSceneItemList(scene)) {
             if (!obs.GetSourceActive(source.SourceName).VideoShowing) {
-                if (UI.Button("UnMute " + source.SourceName)) {
-                    obs.SetSceneItemEnabled("Scene", source.ItemId, true);
+                if (UI.Button("Hide " + source.SourceName)) {
+                    obs.SetSceneItemEnabled(scene, source.ItemId, true);
                 }
             }
             else {
-                if (UI.Button("Mute " + source.SourceName)) {
-                    obs.SetSceneItemEnabled("Scene", source.ItemId, false);
+                if (UI.Button("Show " + source.SourceName)) {
+                    obs.SetSceneItemEnabled(scene, source.ItemId, false);
                 }
             }
         }
-
-        Console.WriteLine("test4");
 
         UI.WindowEnd();
         return;

@@ -34,7 +34,7 @@ public class Browser
 
     public bool selected = false;
 
-    public float browserAspect = 9.0f / 16.0f;
+    public float browserAspect = 10.0f / 16.0f;
     public Material material;
 
     Pose windowPosition;
@@ -70,10 +70,10 @@ public class Browser
     {
         browser = new ChromiumWebBrowser(Url);
         await browser.WaitForInitialLoadAsync();
-        browser.Size = new System.Drawing.Size(1920, 1080);
+        browser.Size = new System.Drawing.Size(1920, 1250);
         browser.Paint += Browser_Paint;
-        //browserAspect = browser.Size.Height / (float)browser.Size.Width;
-        browserAspect = 9f/16f;
+        browserAspect = browser.Size.Height / (float)browser.Size.Width;
+        //browserAspect = 9f/16f;
         Mute();
         InitializeSetVolumeJsFunction();
         dropDownHandler = new CefOffScreenDropdownHandler(browser);

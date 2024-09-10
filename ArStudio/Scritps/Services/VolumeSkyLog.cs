@@ -4,7 +4,7 @@ using TestWebAr.Scritps.Objects;
 public class VolumeSkyLog : DefaultSkyLog {
 
     public VolumeSkyLog(bool volumeSlider = false, bool buttons = false, bool hotKeyPanel = false) : base(volumeSlider, buttons, hotKeyPanel) {
-        
+
     }
 
     protected override void InitSkyLogBrowsers()
@@ -16,9 +16,9 @@ public class VolumeSkyLog : DefaultSkyLog {
             {
                 Quat lookDirection = Quat.LookDir(0, 0, 1);
 
-                Vec3 windowPosition = new Vec3(0.65f * j, (float)(0.36 * -i), -0.5f);
+                Vec3 windowPosition = new Vec3(0.66f * j, 0.12f - (float)(0.45 * -i), -0.7f);
 
-                Vec2 scale = new Vec2(0.5f, 0.5f);
+                Vec2 scale = new Vec2(0.65f, 0.65f);
 
                 if (j != 0)
                 {
@@ -27,7 +27,7 @@ public class VolumeSkyLog : DefaultSkyLog {
                     directionVector = directionVector.Normalized;
                     lookDirection = Quat.LookAt(Vec3.Forward, directionVector);
 
-                    windowPosition.z = windowPosition.z + 0.1f;
+                    windowPosition.z = windowPosition.z + 0.15f;
                 }
 
                 browserList.Add(

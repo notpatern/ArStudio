@@ -5,7 +5,6 @@ using TestWebAr.Scritps.Objects;
 public class ObsSkyLog : DefaultSkyLog {
     ObsWebSocket obs;
     public ObsSkyLog(bool volumeSlider = false, bool buttons = false, bool hotKeyPanel = false) : base(volumeSlider, buttons, hotKeyPanel) {
-
     }
 
     protected override void Init() {
@@ -20,7 +19,7 @@ public class ObsSkyLog : DefaultSkyLog {
         {
             Quat lookDirection = Quat.LookDir(0, 0, 1);
 
-            Vec3 windowPosition = new Vec3(0.65f * i, 0.36f, -0.5f);
+            Vec3 windowPosition = new Vec3(0.65f * i, 0.005f, -0.7f);
 
             Vec2 scale = new Vec2(0.8f, 0.8f);
 

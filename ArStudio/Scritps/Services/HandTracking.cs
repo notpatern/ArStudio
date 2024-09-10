@@ -3,7 +3,7 @@ using StereoKit;
 using System;
 using System.Timers;
 
-namespace TestWebAr.Scritps.Services
+namespace Scritps.Services
 {
     public class HandTracking
     {
@@ -236,7 +236,7 @@ namespace TestWebAr.Scritps.Services
 
             if (rightHandVelocity.y <= -140 && rightHandAnglesDegree.y <= 15)
             {
-                RightFastHand.Invoke();
+                //RightFastHand.Invoke();
             }
         }
     }
