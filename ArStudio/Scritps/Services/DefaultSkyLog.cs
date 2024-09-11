@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Scritps.Services;
 using StereoKit;
 using TestWebAr.Scritps.Objects;
 
-public class DefaultSkyLog {
+public class DefaultSkyLog : IDisposable {
     bool bVolumeSlider;
     bool bButtons;
     bool bHotKeyPanel;
@@ -19,8 +20,11 @@ public class DefaultSkyLog {
     KeyForwarder keyForwarder = new KeyForwarder();
 
     protected int browserAmount;
+    protected Root config;
+    protected string url;
 
-    public DefaultSkyLog(bool volumeSlider = false, bool buttons = false, bool hotKeyPanel = false) {
+    public DefaultSkyLog(Root config, bool volumeSlider = false, bool buttons = false, bool hotKeyPanel = false) {
+        this.config = config;
         bVolumeSlider = volumeSlider;
         bButtons = buttons;
         bHotKeyPanel = hotKeyPanel;
@@ -95,28 +99,30 @@ public class DefaultSkyLog {
                     windowPosition.z = windowPosition.z + 0.1f;
                 }
 
-                if (j != 0) {
-                    browserList.Add(
-                            new Browser(
-                                "https://skylog-demo.broadteam.eu/multiview",
-                                browserAmount.ToString(),
-                                new Pose(windowPosition, lookDirection),
-                                scale.x,
-                                scale.y
-                                )
-                            );
+                url = "https://skylog-demo.broadteam.eu/";
+
+                if (j == -1 && i == 0) {
+                    url = config.defaultdemo.topLeftScreen;
                 }
-                else {
-                    browserList.Add(
-                            new Browser(
-                                "https://skylog-demo.broadteam.eu/",
-                                browserAmount.ToString(),
-                                new Pose(windowPosition, lookDirection),
-                                scale.x,
-                                scale.y
-                                )
-                            );
+                else if (j == 1 && i == 0) {
+                    url = config.defaultdemo.topRightScreen;
                 }
+                else if (j == -1 && i == 1) {
+                    url = config.defaultdemo.bottomLeftScreen;
+                }
+                else if (j == 1 && i == 1) {
+                    url = config.defaultdemo.bottomRightScreen;
+                }
+
+                browserList.Add(
+                        new Browser(
+                            url,
+                            browserAmount.ToString(),
+                            new Pose(windowPosition, lookDirection),
+                            scale.x,
+                            scale.y
+                            )
+                        );
 
 
                 while (browserList[browserAmount].browser == null) { }
@@ -130,7 +136,6 @@ public class DefaultSkyLog {
         }
     }
 
-    /// Remember to bind every singe browser to it
     protected void BindVolumeSlider(Browser browser) {
         if (!bVolumeSlider) {
             return;
@@ -184,6 +189,19 @@ public class DefaultSkyLog {
                 SelectBrowser(browserList[i]);
             }
         }
+
+        UI.VSpace(0.02f);
+
+        if (UI.Button("Refresh")) {
+            selectedBrowser.Refresh();
+        }
+
+        if (UI.Button("Refresh All")) {
+            foreach (Browser browser in browserList) {
+                browser.Refresh();
+            }
+        }
+
         UI.WindowEnd();
     }
 
@@ -201,6 +219,14 @@ public class DefaultSkyLog {
         CaptureKeyboardInput();
         UpdateBrowsers();
         BrowserSelectPanel();
+    }
+
+    public void Dispose() {
+        foreach (Browser browser in browserList) {
+            browser.browser.Dispose();
+            browser.browser = null;
+        }
+        GC.SuppressFinalize(this);
     }
 
     // ------------------------------------------------------------------------------------------------------------

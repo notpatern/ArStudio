@@ -1,0 +1,22 @@
+{
+ 	"default-demo": {
+		"top-Left-Screen": "https://skylog-demo.broadteam.eu/multiview",
+		"top-Right-Screen": "https://skylog-demo.broadteam.eu/multiview",
+		"bottom-Left-Screen": "https://skylog-demo.broadteam.eu/multiview",
+		"bottom-Right-Screen": "https://skylog-demo.broadteam.eu/multiview"
+  	},
+	"volume-demo": {
+	  	"top-Left-Screen": "https://skylog-demo.broadteam.eu/multiview",
+		"top-Middle-Screen": "https://skylog-demo.broadteam.eu/multiview",
+		"top-Right-Screen": "https://skylog-demo.broadteam.eu/multiview",
+		"bottom-Left-Screen": "https://skylog-demo.broadteam.eu/multiview",
+		"bottom-Middle-Screen": "https://skylog-demo.broadteam.eu/multiview",
+		"bottom-Right-Screen": "https://skylog-demo.broadteam.eu/multiview"
+	},
+	"obs-demo": {
+	  	"ip": "ip",
+		"port": "port",
+		"main-Screen": "https://skylog-demo.broadteam.eu",
+		"secondary-Screen": "https://skylog-demo.broadteam.eu/multiview"
+	}
+}

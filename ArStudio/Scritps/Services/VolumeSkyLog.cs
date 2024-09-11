@@ -3,8 +3,7 @@ using TestWebAr.Scritps.Objects;
 
 public class VolumeSkyLog : DefaultSkyLog {
 
-    public VolumeSkyLog(bool volumeSlider = false, bool buttons = false, bool hotKeyPanel = false) : base(volumeSlider, buttons, hotKeyPanel) {
-
+    public VolumeSkyLog(Root config, bool volumeSlider = false, bool buttons = false, bool hotKeyPanel = false) : base(config, volumeSlider, buttons, hotKeyPanel) {
     }
 
     protected override void InitSkyLogBrowsers()
@@ -30,9 +29,32 @@ public class VolumeSkyLog : DefaultSkyLog {
                     windowPosition.z = windowPosition.z + 0.15f;
                 }
 
+                if (i < 1) {
+                    if (j == -1) {
+                        url = config.volumedemo.bottomLeftScreen;
+                    }
+                    if (j == 0) {
+                        url = config.volumedemo.bottomMiddleScreen;
+                    }
+                    if (j == 1) {
+                        url = config.volumedemo.bottomRightScreen;
+                    }
+                }
+                else {
+                    if (j == -1) {
+                        url = config.volumedemo.topLeftScreen;
+                    }
+                    if (j == 0) {
+                        url = config.volumedemo.topMiddleScreen;
+                    }
+                    if (j == 1) {
+                        url = config.volumedemo.topRightScreen;
+                    }
+                }
+
                 browserList.Add(
                         new Browser(
-                            "https://skylog-demo.broadteam.eu/",
+                            url,
                             browserAmount.ToString(),
                             new Pose(windowPosition, lookDirection),
                             scale.x,

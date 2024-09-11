@@ -1,8 +1,10 @@
 using System;
+using System.IO;
 using CefSharp;
 using StereoKit;
 using StereoKit.Framework;
 using TestWebAr.Scritps.Objects;
+using Newtonsoft.Json;
 
 public class App
 {
@@ -12,8 +14,17 @@ public class App
 
     Pose menuSelectPosition = new Pose(new Vec3(0, 0, -0.6f), Quat.LookDir(0, 0, 1));
 
+    Root config;
+
     public void Init()
     {
+        //string configJson = File.ReadAllText("C:\\Users\\rodie\\Documents\\GitHub\\TestAr\\ArStudio\\Scritps\\Config\\config.json");
+        string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string configPath = Path.Combine(exeDirectory, "Config\\config.json");
+        Console.WriteLine(configPath);
+        string configJson = File.ReadAllText(configPath);
+
+        config = JsonConvert.DeserializeObject<Root>(configJson);
         UpdateEvent = SelectMenuUpdate;
 
         SKSettings settings = new SKSettings
@@ -37,20 +48,32 @@ public class App
         UI.WindowBegin("Ar Studio", ref menuSelectPosition);
         if (UI.Button("Default"))
         {
-            skylog = new DefaultSkyLog(volumeSlider: true, hotKeyPanel: true);
+            skylog = new DefaultSkyLog(config, volumeSlider: true, hotKeyPanel: true);
             UpdateEvent = skylog.Update;
+            UpdateEvent += BackToMenu;
         }
 
         if (UI.Button("Volume Demo"))
         {
-            skylog = new VolumeSkyLog(volumeSlider: true);
+            skylog = new VolumeSkyLog(config, volumeSlider: true);
             UpdateEvent = skylog.Update;
+            UpdateEvent += BackToMenu;
         }
 
         if (UI.Button("Obs Remote Control"))
         {
-            skylog = new ObsSkyLog(volumeSlider: true);
+            skylog = new ObsSkyLog(config, volumeSlider: true);
             UpdateEvent = skylog.Update;
+            UpdateEvent += BackToMenu;
+        }
+        UI.WindowEnd();
+    }
+
+    private void BackToMenu() {
+        UI.WindowBegin("Menu", ref menuSelectPosition, UIWin.Body);
+        if (UI.Button("Back to Menu")) {
+            UpdateEvent = SelectMenuUpdate;
+            skylog.Dispose();
         }
         UI.WindowEnd();
     }
@@ -63,7 +86,6 @@ public class App
 
 public class KeyForwarder
 {
-
     public void CheckAndForwardKey(Browser selectedBrowser, Key skKey, VirtualKeyCode vkCode)
     {
         if (Input.Key(skKey).IsJustActive())

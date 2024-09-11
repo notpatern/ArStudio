@@ -19,8 +19,6 @@ public static class CefInstance {
                 "CefSharp\\Cache")
         };
 
-        Console.WriteLine(Environment.CurrentDirectory);
-
         settings.WindowlessRenderingEnabled = true;
         settings.CefCommandLineArgs.Add("enable-media-stream", "1");
         settings.CefCommandLineArgs.Add("enable-widevine-cdm", "1");

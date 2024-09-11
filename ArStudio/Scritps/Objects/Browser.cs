@@ -70,7 +70,7 @@ public class Browser
     {
         browser = new ChromiumWebBrowser(Url);
         await browser.WaitForInitialLoadAsync();
-        browser.Size = new System.Drawing.Size(1920, 1250);
+        browser.Size = new System.Drawing.Size(1930, 1250);
         browser.Paint += Browser_Paint;
         browserAspect = browser.Size.Height / (float)browser.Size.Width;
         //browserAspect = 9f/16f;
@@ -84,6 +84,13 @@ public class Browser
         tex[texCurr].SetColors(e.Width, e.Height, e.BufferHandle);
         Texture = tex[texCurr];
         texCurr = (texCurr + 1) % 2;
+    }
+
+    public void Refresh() {
+        var mainFrame = browser.GetBrowser().MainFrame;
+        string url = mainFrame.Url;
+
+        Url = url;
     }
 
     public void SendKey(
