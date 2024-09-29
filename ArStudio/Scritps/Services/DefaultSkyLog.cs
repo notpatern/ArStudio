@@ -193,11 +193,14 @@ public class DefaultSkyLog : IDisposable {
         UI.VSpace(0.02f);
 
         if (UI.Button("Refresh")) {
-            selectedBrowser.Refresh();
+            if (selectedBrowser != null)
+            {
+                selectedBrowser.Refresh();
+            }
         }
 
         if (UI.Button("Refresh All")) {
-            foreach (Browser browser in browserList) {
+            foreach (Browser browser in browserList) { 
                 browser.Refresh();
             }
         }

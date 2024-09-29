@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OBSWebsocketDotNet;
 using OBSWebsocketDotNet.Communication;
 using OBSWebsocketDotNet.Types;
@@ -85,6 +86,18 @@ public class ObsWebSocket
         obs.ConnectAsync(url, password);
     }
 
+    private void CreateSource(int index)
+    {
+        Newtonsoft.Json.Linq.JObject settings = new Newtonsoft.Json.Linq.JObject();
+        settings["monitor"] = 1;
+        settings["capture_cursor"] = true;
+        if (sceneDetails.Any(obj => obj.SourceName == "Video " + index)) {
+            CreateSource(index + 1);
+            return;
+        }
+        obs.CreateInput(scene, "Video " + index, "monitor_capture", settings, true);
+    }
+
     public void Update() {
         if (!update) {
             return;
@@ -104,10 +117,7 @@ public class ObsWebSocket
 
         UI.SameLine();
         if (UI.Button("New Source")) {
-            Newtonsoft.Json.Linq.JObject settings = new Newtonsoft.Json.Linq.JObject();
-            settings["monitor"] = 1;
-            settings["capture_cursor"] = true;
-            obs.CreateInput(scene, "Video", "monitor_capture", settings, true);
+            CreateSource(0);
         }
 
         UI.NextLine();

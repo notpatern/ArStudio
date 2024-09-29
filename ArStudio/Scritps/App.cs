@@ -18,11 +18,11 @@ public class App
 
     public void Init()
     {
-        //string configJson = File.ReadAllText("C:\\Users\\rodie\\Documents\\GitHub\\TestAr\\ArStudio\\Scritps\\Config\\config.json");
-        string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        string configPath = Path.Combine(exeDirectory, "Config\\config.json");
-        Console.WriteLine(configPath);
-        string configJson = File.ReadAllText(configPath);
+        string configJson = File.ReadAllText("C:\\Users\\rodie\\Documents\\GitHub\\TestAr\\ArStudio\\Scritps\\Config\\config.json");
+        //string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        //string configPath = Path.Combine(exeDirectory, "Config\\config.json");
+        //Console.WriteLine(configPath);
+        //string configJson = File.ReadAllText(configPath);
 
         config = JsonConvert.DeserializeObject<Root>(configJson);
         UpdateEvent = SelectMenuUpdate;
