@@ -8,14 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CefSharp.Common.NETCore" Version="128.4.90" />
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="128.4.90" />
+    <PackageReference Include="CefSharp.Common.NETCore" Version="126.2.180" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="126.2.180" />
     <PackageReference Include="obs-websocket-dotnet" Version="5.0.0.3" />
     <PackageReference Include="StereoKit" Version="0.3.9" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="128.4.9" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="126.2.18" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="128.4.9" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="126.2.18" />
   </ItemGroup>
 
 </Project>

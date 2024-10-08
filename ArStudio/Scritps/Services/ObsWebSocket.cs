@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using OBSWebsocketDotNet;
 using OBSWebsocketDotNet.Communication;
 using OBSWebsocketDotNet.Types;
@@ -19,6 +20,11 @@ public class ObsWebSocket
     bool isRecording = false;
     List<SceneItemDetails> sceneDetails;
     Dictionary<SceneItemDetails, bool> sceneItemStates = new Dictionary<SceneItemDetails, bool>();
+
+    delegate void UpdateDelegate();
+    event UpdateDelegate updateHandler;
+
+    WindowCreator creator = new WindowCreator();
 
     public ObsWebSocket(string url, string password = "") {
         obs = new OBSWebsocket();
@@ -42,6 +48,8 @@ public class ObsWebSocket
         obs.SceneItemRemoved += onSceneChanged;
         obs.SceneItemCreated += onSceneChanged;
         obs.RecordStateChanged += recordStatus;
+
+        updateHandler = UpdateObsHierarchy;
     }
 
     private void recordStatus(object sender, EventArgs e) {
@@ -63,7 +71,9 @@ public class ObsWebSocket
         foreach (var source in sceneDetails) {
             sceneItemStates.Add(source, obs.GetSourceActive(source.SourceName).VideoShowing);
         }
-
+        foreach (var inputKind in obs.GetInputKindList()) {
+            Console.WriteLine(inputKind);
+        }
         update = true;
     }
 
@@ -86,23 +96,19 @@ public class ObsWebSocket
         obs.ConnectAsync(url, password);
     }
 
-    private void CreateSource(int index)
+    private void CreateSource(string name, string inputKind, JObject settings)
     {
-        Newtonsoft.Json.Linq.JObject settings = new Newtonsoft.Json.Linq.JObject();
-        settings["monitor"] = 1;
-        settings["capture_cursor"] = true;
-        if (sceneDetails.Any(obj => obj.SourceName == "Video " + index)) {
-            CreateSource(index + 1);
-            return;
-        }
-        obs.CreateInput(scene, "Video " + index, "monitor_capture", settings, true);
+        obs.CreateInput(scene, UniqueName(name), inputKind, settings, true);
     }
 
-    public void Update() {
-        if (!update) {
-            return;
+    private string UniqueName(string name, int index = 0) {
+        if (sceneDetails.Any(obj => obj.SourceName == name + index)) {
+            return UniqueName(name, ++index);
         }
+        return name + index;
+    }
 
+    public void UpdateObsHierarchy() {
         UI.WindowBegin("Obs Remote Control", ref windowPosition);
         if (isRecording) {
             if (UI.Button("Stop Recording")) {
@@ -117,7 +123,8 @@ public class ObsWebSocket
 
         UI.SameLine();
         if (UI.Button("New Source")) {
-            CreateSource(0);
+            updateHandler = UpdateNewSourceWindow;
+            return;
         }
 
         UI.NextLine();
@@ -138,6 +145,80 @@ public class ObsWebSocket
         }
 
         UI.WindowEnd();
-        return;
+    }
+
+    string dirtyKey;
+    string selectedKey;
+    public void UpdateNewSourceWindow() {
+        UI.WindowBegin("NewSource", ref windowPosition);
+        foreach (var sourceKind in InputKind.sourceArray) {
+            bool currentValue = creator.sourceStates[sourceKind];
+            if (UI.Toggle(sourceKind, ref currentValue)) {
+                currentValue = true;
+                selectedKey = sourceKind;
+                if (dirtyKey != null && dirtyKey != selectedKey) {
+                    creator.sourceStates[dirtyKey] = false;
+                }
+                creator.sourceStates[selectedKey] = true;
+                dirtyKey = sourceKind;
+            }
+        }
+        if (UI.Button("Confirm")) {
+            CreateSource(selectedKey, selectedKey, creator.sourceSettings[selectedKey]);
+            updateHandler = UpdateObsHierarchy;
+        }
+        UI.WindowEnd();
+    }
+
+    public void Update() {
+        if (!update) {
+            return;
+        }
+
+        updateHandler.Invoke();
+    }
+}
+
+public static class InputKind {
+    public const string MonitorCapture = "monitor_capture";
+    public const string ColorSource = "color_source_v3";
+
+    public static string[] sourceArray = { MonitorCapture, ColorSource };
+}
+
+public struct WindowCreator {
+    public Dictionary<string, bool> sourceStates = new Dictionary<string, bool>();
+    public Dictionary<string, JObject> sourceSettings = new Dictionary<string, JObject>();
+
+    public string selectedSourceType;
+
+    public WindowCreator() {
+        FillStates();
+        FillSettings();
+    }
+
+    void FillStates() {
+        foreach (string sourceKind in InputKind.sourceArray) {
+            sourceStates[sourceKind] = false;
+        }
+    }
+
+    void FillSettings() {
+        foreach (string sourceKind in InputKind.sourceArray) {
+            if (sourceKind == InputKind.MonitorCapture) {
+                sourceSettings[sourceKind] = new JObject {
+                    { "monitor", 1 },
+                    { "capture_cursor", true }
+                };
+            }
+
+            else if (sourceKind == InputKind.ColorSource) {
+                sourceSettings[sourceKind] = new JObject {
+                    { "color", "0xFF0000FF" },
+                    { "width", 1920 },
+                    { "height", 1080 }
+                };
+            }
+        }
     }
 }
