@@ -2,7 +2,6 @@
 using System;
 using CefSharp;
 using TestWebAr.Scritps.Objects;
-using static App;
 
 public static class SkyLogEvents
 {

@@ -14,7 +14,7 @@
 		"bottom-Right-Screen": "https://skylog-demo.broadteam.eu/multiview"
 	},
 	"obs-demo": {
-		"ip": "192.168.1.47",
+		"ip": "91.121.35.154",
 		"port": "4455",
 		"main-Screen": "https://skylog-demo.broadteam.eu",
 		"secondary-Screen": "https://skylog-demo.broadteam.eu/multiview"

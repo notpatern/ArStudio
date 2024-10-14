@@ -5,23 +5,22 @@ using System.Timers;
 
 namespace Scritps.Services
 {
+    public struct HandData {
+        public Hand hand;
+        public Vec3 position;
+        public Vec3 relativePosition;
+        public Vec2 angleDegree;
+        public Vec2 angleRadian;
+        public Vec3 velocity;
+        public Vec3 relativeVelocity;
+    }
     public class HandTracking
     {
-        //TODO: make custom types or structs for the values (degree/radian)
         double fixedDeltaTime = 0.02;
         System.Timers.Timer handTrackingTimer = new System.Timers.Timer(0020); // hard coded fixed amount
 
-        Hand rightHand = Input.Hand(Handed.Right);
-        Hand leftHand = Input.Hand(Handed.Left);
-
         Vec3 headForward;
         Vec3 headPosition;
-
-        Vec3 rightHandPosition;
-        Vec3 leftHandPosition;
-
-        Vec3 rightHandRelativePosition;
-        Vec3 leftHandRelativePosition;
 
         Vec3 dirtyRightHandPosition = new Vec3();
         Vec3 dirtyLeftHandPosition = new Vec3();
@@ -29,29 +28,8 @@ namespace Scritps.Services
         Vec3 dirtyRightHandRelativePosition = new Vec3();
         Vec3 dirtyLeftHandRelativePosition = new Vec3();
 
-        double radianRightHandVerticalAngle;
-        double radianLeftHandVerticalAngle;
-
-        double radianRightHandHorizontalAngle;
-        double radianLeftHandHorizontalAngle;
-
-        double degreeRightHandVerticalAngle;
-        double degreeLeftHandVerticalAngle;
-
-        double degreeRightHandHorizontalAngle;
-        double degreeLeftHandHorizontalAngle;
-
-        Vec2 rightHandAnglesDegree = new Vec2();
-        Vec2 leftHandAnglesDegree = new Vec2();
-
-        Vec2 rightHandAnglesRadian = new Vec2();
-        Vec2 leftHandAnglesRadian = new Vec2();
-
-        Vec3 rightHandVelocity = new Vec3();
-        Vec3 leftHandVelocity = new Vec3();
-
-        Vec3 rightHandRelativeVelocity = new Vec3();
-        Vec3 leftHandRelativeVelocity = new Vec3();
+        HandData rightHandData = new HandData();
+        HandData leftHandData = new HandData();
 
         public Action RightFastHand;
         public Action LeftHandDownFast;
@@ -88,24 +66,24 @@ namespace Scritps.Services
 
         private void CalculateHandsPosition()
         {
-            Hand rightHand = Input.Hand(Handed.Right);
-            Hand leftHand = Input.Hand(Handed.Left);
+            rightHandData.hand = Input.Hand(Handed.Right);
+            leftHandData.hand = Input.Hand(Handed.Left);
 
-            rightHandPosition = rightHand.palm.position;
-            leftHandPosition = leftHand.palm.position;
+            rightHandData.position = rightHandData.hand.palm.position;
+            leftHandData.position = leftHandData.hand.palm.position;
 
-            rightHandRelativePosition = rightHandPosition - headPosition;
-            leftHandRelativePosition = leftHandPosition - headPosition;
+            rightHandData.relativePosition = rightHandData.position- headPosition;
+            leftHandData.relativePosition = leftHandData.position - headPosition;
 
-            rightHandVelocity = CalculateVelocity(dirtyRightHandPosition, rightHandPosition);
-            leftHandVelocity = CalculateVelocity(dirtyLeftHandPosition, leftHandPosition);
-            rightHandRelativeVelocity = CalculateVelocity(dirtyRightHandRelativePosition, rightHandRelativePosition);
-            leftHandRelativeVelocity = CalculateVelocity(dirtyLeftHandRelativePosition, leftHandRelativePosition);
+            rightHandData.velocity = CalculateVelocity(dirtyRightHandPosition, rightHandData.position);
+            leftHandData.velocity = CalculateVelocity(dirtyLeftHandPosition, leftHandData.position);
+            rightHandData.relativeVelocity = CalculateVelocity(dirtyRightHandRelativePosition, rightHandData.relativePosition);
+            leftHandData.relativeVelocity = CalculateVelocity(dirtyLeftHandRelativePosition, leftHandData.relativePosition);
 
-            dirtyRightHandPosition = rightHandPosition;
-            dirtyLeftHandPosition = leftHandPosition;
-            dirtyRightHandRelativePosition = rightHandRelativePosition;
-            dirtyLeftHandRelativePosition = leftHandRelativePosition;
+            dirtyRightHandPosition = rightHandData.position;
+            dirtyLeftHandPosition = leftHandData.position;
+            dirtyRightHandRelativePosition = rightHandData.relativePosition;
+            dirtyLeftHandRelativePosition = leftHandData.relativePosition;
         }
 
         private Vec3 CalculateVelocity(Vec3 pointA, Vec3 pointB)
@@ -117,8 +95,6 @@ namespace Scritps.Services
                 return new Vec3();
             }
 
-            //TODO: refacto custom types Vector3 double
-
             velocity = (pointB - pointA) * (float)(1 / fixedDeltaTime) * 100;
 
             return velocity;
@@ -126,117 +102,116 @@ namespace Scritps.Services
 
         private void CalculateRadianAngles()
         {
-            radianRightHandVerticalAngle = Math.Atan2(rightHandRelativePosition.z, rightHandRelativePosition.y) - Math.Atan2(headForward.z, headForward.y);
-            radianLeftHandVerticalAngle = Math.Atan2(leftHandRelativePosition.z, leftHandRelativePosition.y) - Math.Atan2(headForward.z, headForward.y);
+            leftHandData.angleRadian.y = (float)((float)Math.Atan2(leftHandData.relativePosition.z, leftHandData.relativePosition.y) - Math.Atan2(headForward.z, headForward.y));
+            rightHandData.angleRadian.y = (float)((float)Math.Atan2(rightHandData.relativePosition.z, rightHandData.relativePosition.y) - Math.Atan2(headForward.z, headForward.y));
 
-            radianRightHandHorizontalAngle = Math.Atan2(rightHandRelativePosition.z, rightHandRelativePosition.x) - Math.Atan2(headForward.z, headForward.x);
-            radianLeftHandHorizontalAngle = Math.Atan2(leftHandRelativePosition.z, leftHandRelativePosition.x) - Math.Atan2(headForward.z, headForward.x);
-
-            rightHandAnglesRadian.x = (float)radianRightHandHorizontalAngle;
-            rightHandAnglesRadian.y = (float)radianRightHandVerticalAngle;
-            leftHandAnglesRadian.x = (float)radianLeftHandHorizontalAngle;
-            leftHandAnglesRadian.y = (float)radianLeftHandVerticalAngle;
+            leftHandData.angleRadian.x = (float)((float)Math.Atan2(leftHandData.relativePosition.z, leftHandData.relativePosition.x) - Math.Atan2(headForward.z, headForward.x));
+            rightHandData.angleRadian.x = (float)((float)Math.Atan2(rightHandData.relativePosition.z, rightHandData.relativePosition.x) - Math.Atan2(headForward.z, headForward.x));
         }
 
         private void CalculateDegreeAngles()
         {
-            degreeRightHandVerticalAngle = 180 / Math.PI * radianRightHandVerticalAngle;
-            degreeLeftHandVerticalAngle = 180 / Math.PI * radianLeftHandVerticalAngle;
+            rightHandData.angleDegree.y = (float)(180 / Math.PI * rightHandData.angleRadian.y);
+            leftHandData.angleDegree.y = (float)(180 / Math.PI * leftHandData.angleRadian.y);
 
-            degreeRightHandHorizontalAngle = 180 / Math.PI * radianRightHandHorizontalAngle;
-            degreeLeftHandHorizontalAngle = 180 / Math.PI * radianLeftHandHorizontalAngle;
-
-            rightHandAnglesDegree.x = (float)degreeRightHandHorizontalAngle;
-            rightHandAnglesDegree.y = (float)degreeRightHandVerticalAngle;
-            leftHandAnglesDegree.x = (float)degreeLeftHandHorizontalAngle;
-            leftHandAnglesDegree.y = (float)degreeLeftHandVerticalAngle;
+            rightHandData.angleDegree.x = (float)(180 / Math.PI * rightHandData.angleRadian.x);
+            leftHandData.angleDegree.x = (float)(180 / Math.PI * leftHandData.angleRadian.x);
         }
         #endregion
 
         private void UpdateHandTrackingChecks(object sender, ElapsedEventArgs e)
         {
-            if (Vec3.Distance(leftHand.palm.position, rightHand.palm.position) <= 0.07f)
+            if (inputBuffer < 0.3f) {
+                inputBuffer += (float)fixedDeltaTime;
+                return;
+            }
+
+            // log commands
+            if (Vec3.Distance(leftHandData.position, rightHandData.position) <= 0.07f)
             {
-                if (leftHandVelocity.x >= 100 && rightHandVelocity.x <= 100)
+                if (leftHandData.velocity.x >= 100 && rightHandData.velocity.x <= 100)
                 {
-                    if (leftHand.IsPinched && rightHand.IsPinched)
+                    if (leftHandData.hand.IsPinched && rightHandData.hand.IsPinched)
                     {
                         SkyLogEvents.CancelOpenLog.Invoke();
+                        inputBuffer = 0;
+                    }
+                }
+            }
+
+            if (Vec3.Dot(leftHandData.hand.palm.Forward, headForward) <= -0.60)
+            {
+                if (rightHandData.velocity.x >= 120 && rightHandData.angleDegree.x >= 25)
+                {
+                    if (rightHandData.hand.IsPinched && (Vec3.Dot(rightHandData.hand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
+                        SkyLogEvents.NewLog.Invoke();
+                        inputBuffer = 0;
+                    }
+                }
+
+                if (rightHandData.velocity.x <= -120 && rightHandData.angleDegree.x <= -25)
+                {
+                    if (rightHandData.hand.IsPinched && (Vec3.Dot(rightHandData.hand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
+                        SkyLogEvents.CloseLog.Invoke();
+                        inputBuffer = 0;
+                    }
+                }
+
+                if (rightHandData.velocity.y >= 120 && rightHandData.angleDegree.y >= 20)
+                {
+                    if (rightHandData.hand.IsPinched && (Vec3.Dot(rightHandData.hand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
+                        SkyLogEvents.CancelLog.Invoke();
+                        inputBuffer = 0;
                     }
                 }
             }
 
             // player commands
-            if (leftHand.IsGripped) {
-                if (rightHandVelocity.y <= -100) {
+            if (leftHandData.hand.IsGripped && leftHandData.angleDegree.y > -10) {
+                if (rightHandData.velocity.y <= -100 && rightHandData.angleDegree.x >= 30) {
                     SkyLogEvents.Pause.Invoke();
-                    Console.WriteLine("pause");
+                    inputBuffer = 0;
                 }
 
-                if (rightHandVelocity.y >= 100) {
+                if (rightHandData.velocity.y >= 100 && rightHandData.angleDegree.x >= 30) {
                     SkyLogEvents.Play.Invoke();
-                    Console.WriteLine("play");
+                    inputBuffer = 0;
                 }
 
-                if (rightHandVelocity.x >= 100) {
+                if (rightHandData.velocity.x >= 100 && rightHandData.angleDegree.x >= 30) {
                     SkyLogEvents.RightFrame.Invoke();
-                    Console.WriteLine("RightFrame");
+                    inputBuffer = 0;
                 }
 
-                if (rightHandVelocity.x <= -100) {
+                if (rightHandData.velocity.x <= -100 && rightHandData.angleDegree.x >= 30) {
                     SkyLogEvents.LeftFrame.Invoke();
-                    Console.WriteLine("LeftFrame");
+                    inputBuffer = 0;
                 }
             }
 
-            if (Vec3.Dot(rightHand.palm.Forward.Normalized, leftHand.palm.Forward.Normalized) <= -0.60) {
-                if (rightHandVelocity.y >= 120) {
+            if (Vec3.Dot(rightHandData.hand.palm.Forward.Normalized, leftHandData.hand.palm.Forward.Normalized) <= -0.60) {
+                if (rightHandData.velocity.y >= 120) {
                     SkyLogEvents.BackToLive.Invoke();
+                    inputBuffer = 0;
                 }
             }
 
-            if (Vec3.Dot(leftHand.palm.Forward, headForward) <= -0.60)
-            {
-                if (rightHandVelocity.x >= 120)
-                {
-                    if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
-                        SkyLogEvents.NewLog.Invoke();
-                    }
-                }
-
-                if (rightHandVelocity.x <= -120)
-                {
-                    if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
-                        SkyLogEvents.CloseLog.Invoke();
-                    }
-                }
-
-                if (rightHandVelocity.y >= 120)
-                {
-                    if (rightHand.IsPinched && (Vec3.Dot(rightHand.palm.Forward.Normalized, headForward.Normalized) >= 0.9)) {
-                        SkyLogEvents.CancelLog.Invoke();
-                    }
-                }
-            }
-
-            if (leftHandVelocity.x >= 100 && rightHandVelocity.x <= 100) {
-                if (leftHand.IsPinched && rightHand.IsPinched) {
+            if (leftHandData.velocity.x <= -100 && rightHandData.velocity.x >= 100) {
+                if (leftHandData.hand.IsPinched && rightHandData.hand.IsPinched) {
                     SkyLogEvents.ClearMarkers.Invoke();
+                    inputBuffer = 0;
                 }
             }
 
-            if (leftHand.IsGripped) {
+            if (leftHandData.hand.IsGripped) {
                 SkyLogEvents.CopyPlayerTimeCode.Invoke();
+                // no need for input buffer as it sends space repetively so that the use can copy.
             }
 
-            if (leftHandVelocity.x >= 120 && leftHandAnglesDegree.x <= -30)
+            if (leftHandData.velocity.x >= 120 && leftHandData.angleDegree.x <= -30)
             {
                 SkyLogEvents.Tab.Invoke();
-            }
-
-            if (rightHandVelocity.y <= -140 && rightHandAnglesDegree.y <= 15)
-            {
-                //RightFastHand.Invoke();
+                inputBuffer = 0;
             }
         }
     }
