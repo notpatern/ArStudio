@@ -14,7 +14,8 @@ namespace Scritps.Services
         public Vec3 velocity;
         public Vec3 relativeVelocity;
     }
-    public class HandTracking
+
+    public class HandTracking : IDisposable
     {
         double fixedDeltaTime = 0.02;
         System.Timers.Timer handTrackingTimer = new System.Timers.Timer(0020); // hard coded fixed amount
@@ -39,6 +40,11 @@ namespace Scritps.Services
         public HandTracking()
         {
             Init();
+        }
+
+        public void Dispose() {
+            handTrackingTimer.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         private void Init()

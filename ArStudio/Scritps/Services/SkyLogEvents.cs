@@ -5,7 +5,6 @@ using TestWebAr.Scritps.Objects;
 
 public static class SkyLogEvents
 {
-
     public static Browser selectedBrowser;
 
     public static KeyForwarder keyForwarder;
@@ -443,7 +442,7 @@ public static class SkyLogEvents
 
     private static void CopyPlayerTimeCodeMethod()
     {
-        if (selectedBrowser == null)
+        if (selectedBrowser == null || selectedBrowser.browser.GetBrowserHost() == null)
             return;
 
         var browserHost = selectedBrowser.browser.GetBrowserHost();
@@ -471,7 +470,7 @@ public static class SkyLogEvents
 
     private static void BackToLiveMethod()
     {
-        if (selectedBrowser == null)
+        if (selectedBrowser == null || selectedBrowser.browser.GetBrowserHost() == null)
             return;
 
         var browserHost = selectedBrowser.browser.GetBrowserHost();
@@ -519,7 +518,7 @@ public static class SkyLogEvents
 
     private static void TabMethod()
     {
-        if (selectedBrowser == null)
+        if (selectedBrowser == null || selectedBrowser.browser.GetBrowserHost() == null)
             return;
 
         var browserHost = selectedBrowser.browser.GetBrowserHost();
@@ -547,10 +546,8 @@ public static class SkyLogEvents
 
     private static void CancelOpenLogMethod()
     {
-        if (selectedBrowser == null)
-        {
+        if (selectedBrowser == null || selectedBrowser.browser.GetBrowserHost() == null)
             return;
-        }
 
         var browserHost = selectedBrowser.browser.GetBrowserHost();
 
@@ -574,10 +571,8 @@ public static class SkyLogEvents
 
     private static void CancelLogMethod()
     {
-        if (selectedBrowser == null)
-        {
+        if (selectedBrowser == null || selectedBrowser.browser.GetBrowserHost() == null)
             return;
-        }
 
         var browserHost = selectedBrowser.browser.GetBrowserHost();
 
@@ -624,10 +619,8 @@ public static class SkyLogEvents
 
     private static void CloseLogMethod()
     {
-        if (selectedBrowser == null)
-        {
+        if (selectedBrowser == null || selectedBrowser.browser.GetBrowserHost() == null)
             return;
-        }
 
         var browserHost = selectedBrowser.browser.GetBrowserHost();
 
@@ -676,10 +669,9 @@ public static class SkyLogEvents
 
     private static void PlayVideoMethod()
     {
-        if (selectedBrowser == null)
-        {
+        if (selectedBrowser == null || selectedBrowser.browser.GetBrowserHost() == null)
             return;
-        }
+
         var browserHost = selectedBrowser.browser.GetBrowserHost();
 
         // Send the Ctrl (Left) keydown event

@@ -200,7 +200,7 @@ public class DefaultSkyLog : IDisposable {
         }
 
         if (UI.Button("Refresh All")) {
-            foreach (Browser browser in browserList) { 
+            foreach (Browser browser in browserList) {
                 browser.Refresh();
             }
         }
@@ -229,6 +229,7 @@ public class DefaultSkyLog : IDisposable {
             browser.browser.Dispose();
             browser.browser = null;
         }
+        handTracking.Dispose();
         GC.SuppressFinalize(this);
     }
 

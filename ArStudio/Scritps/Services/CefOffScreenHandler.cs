@@ -6,6 +6,7 @@ public class CefOffScreenDropdownHandler {
     private readonly ChromiumWebBrowser _browser;
     private bool _dropdownOpened = false;
 
+    // remnant of a test i was doing and might need to resume depending on the web dev team's work
     public CefOffScreenDropdownHandler(ChromiumWebBrowser browser) {
         _browser = browser;
 
